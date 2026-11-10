@@ -28,6 +28,12 @@
         --accent: #ff4d2e;
         --volt: #ffd23f;
         --radius: 12px;
+        /* The tab bar's total height: 40px of content (2px inner top
+           padding + 38px button: 4px pad, 18px icon, 2px gap, label,
+           2px pad) plus the device's real home-indicator inset and
+           nothing else. One variable, used everywhere something has
+           to sit exactly above the bar. */
+        --tabbar-h: calc(40px + env(safe-area-inset-bottom, 0px));
       }
       * { box-sizing: border-box; }
       html, body { height: 100%; }
@@ -74,8 +80,8 @@
       svg.ic { flex: none; }
 
       /* ---------- bottom nav ---------- */
-      #tabbar { border-top: 1px solid var(--border); background: rgba(13, 11, 16, 0.95); backdrop-filter: blur(8px); }
-      #tabbar .inner { display: grid; grid-template-columns: repeat(5, 1fr); max-width: 768px; margin: 0 auto; padding: 2px 8px max(4px, env(safe-area-inset-bottom)); }
+      #tabbar { flex: none; border-top: 1px solid var(--border); background: rgba(13, 11, 16, 0.95); backdrop-filter: blur(8px); }
+      #tabbar .inner { display: grid; grid-template-columns: repeat(5, 1fr); max-width: 768px; margin: 0 auto; padding: 2px 8px env(safe-area-inset-bottom, 0px); }
       #tabbar button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0 2px; border-radius: 8px; font-family: "Archivo", system-ui, sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dim); }
       #tabbar button svg.ic { width: 18px; height: 18px; }
       #tabbar button[aria-selected="true"] { color: var(--accent); }
@@ -241,7 +247,7 @@
       .modal-actions { display: flex; gap: 8px; margin-top: 16px; }
       .modal-actions .btn { flex: 1; padding: 10px 16px; font-size: 14px; }
       /* Session stops above the tab bar: nav stays visible; tapping away pauses. */
-      #session { bottom: calc(48px + max(4px, env(safe-area-inset-bottom))); }
+      #session { bottom: var(--tabbar-h); }
       #session.break { background: var(--break-bg); }
       .rounds-particles { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
       .break-big { font-size: 44px; font-weight: 900; line-height: 1.02; color: var(--break); overflow-wrap: break-word; margin: 12px 0 0; font-variant-numeric: tabular-nums; }
@@ -287,7 +293,7 @@
       .note-body-input { width: 100%; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); padding: 12px 14px; font-size: 18px; line-height: normal; font-family: inherit; }
       .note-body-edit { font-size: 20px; }
       /* New-note save bar: pinned just above the tab bar, two half-width buttons. */
-      #note-savebar { position: fixed; left: 0; right: 0; z-index: 35; border-top: 1px solid var(--border); background: rgba(13,11,16,0.95); backdrop-filter: blur(8px); bottom: calc(48px + max(4px, env(safe-area-inset-bottom))); }
+      #note-savebar { position: fixed; left: 0; right: 0; z-index: 35; border-top: 1px solid var(--border); background: rgba(13,11,16,0.95); backdrop-filter: blur(8px); bottom: var(--tabbar-h); }
       #note-savebar .inner { max-width: 768px; margin: 0 auto; display: flex; gap: 8px; padding: 10px 12px; }
       #note-savebar .btn-lg { flex: 1; }
       /* Floating plus fan (plain tap) */
@@ -301,8 +307,8 @@
       .conductor-wrap { position: relative; height: calc(100dvh - 62px); min-height: 430px; background: #000; }
       .conductor-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
       .conductor-play { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); display: flex; width: 56px; height: 56px; align-items: center; justify-content: center; border-radius: 999px; background: var(--accent); color: #fff; box-shadow: 0 12px 32px rgba(0,0,0,0.5); z-index: 3; }
-      .conductor-edit { position: absolute; bottom: calc(60px + max(4px, env(safe-area-inset-bottom))); right: 16px; display: flex; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 999px; border: 1px solid var(--border); background: rgba(13,11,16,0.85); color: var(--text); box-shadow: 0 12px 32px rgba(0,0,0,0.4); backdrop-filter: blur(6px); z-index: 3; }
-      .conductor-panel { position: absolute; left: 12px; right: 12px; top: auto; bottom: calc(132px + max(4px, env(safe-area-inset-bottom))); z-index: 4; max-height: calc(100% - 176px); overflow-y: auto; border-radius: var(--radius); border: 1px solid var(--border); background: rgba(13,11,16,0.95); backdrop-filter: blur(8px); padding: 12px; box-shadow: 0 24px 60px rgba(0,0,0,0.6); }
+      .conductor-edit { position: absolute; bottom: calc(var(--tabbar-h) + 12px); right: 16px; display: flex; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 999px; border: 1px solid var(--border); background: rgba(13,11,16,0.85); color: var(--text); box-shadow: 0 12px 32px rgba(0,0,0,0.4); backdrop-filter: blur(6px); z-index: 3; }
+      .conductor-panel { position: absolute; left: 12px; right: 12px; top: auto; bottom: calc(var(--tabbar-h) + 84px); z-index: 4; max-height: calc(100% - 176px); overflow-y: auto; border-radius: var(--radius); border: 1px solid var(--border); background: rgba(13,11,16,0.95); backdrop-filter: blur(8px); padding: 12px; box-shadow: 0 24px 60px rgba(0,0,0,0.6); }
       .conductor-panel input[type="range"] { flex: 1; min-width: 0; accent-color: var(--volt); }
       #tabbar button:disabled { opacity: 0.35; }
 
@@ -378,14 +384,20 @@
       /* Conductor: fixed to the viewport, edge to edge; the play/pause
          floats centered just above the tab bar. */
       .conductor-wrap { position: fixed; inset: 0; height: auto; min-height: 0; z-index: 25; }
-      .conductor-play { bottom: calc(60px + max(4px, env(safe-area-inset-bottom))); box-shadow: none; }
+      .conductor-play { bottom: calc(var(--tabbar-h) + 12px); box-shadow: none; }
       /* The edit button sits bottom-right, level with play/pause;
          its panel opens as a sheet at the bottom, above the pause
          button, and tapping anywhere outside closes it (every
          control applies its change as it's moved). */
-      .conductor-edit { width: 40px; height: 40px; box-shadow: none; top: auto; bottom: calc(60px + max(4px, env(safe-area-inset-bottom))); right: 16px; }
+      .conductor-edit { width: 40px; height: 40px; box-shadow: none; top: auto; bottom: calc(var(--tabbar-h) + 12px); right: 16px; }
       .conductor-backdrop { position: absolute; inset: 0; z-index: 2; background: transparent; cursor: default; }
       .conductor-edit > svg.ic { width: 20px; height: 20px; }
+      /* Animation switcher: bottom-left, level with the play/pause
+         button it sits beside — Four points / Pendulum. */
+      .conductor-switch { position: absolute; left: 10px; bottom: calc(var(--tabbar-h) + 25px); z-index: 3; display: flex; gap: 2px; padding: 2px; border-radius: 999px; border: 1px solid var(--border); background: rgba(13,11,16,0.85); backdrop-filter: blur(6px); }
+      .conductor-switch button { border: none; background: transparent; color: var(--dim); font-family: "Archivo", system-ui, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.02em; padding: 6px; border-radius: 999px; cursor: pointer; white-space: nowrap; }
+      .conductor-switch button.active { background: var(--volt); color: #16131c; }
+      @media (max-width: 370px) { .conductor-switch button { font-size: 9px; padding: 5px; } }
       #tabbar { position: relative; z-index: 40; }
       /* Category rows expand to their items. */
       .cat-item-box { display: inline-block; border: 1px solid var(--border); background: var(--bg); border-radius: 6px; padding: 4px 8px; font-size: 14px; }
@@ -400,14 +412,25 @@
          home-screen app, leaving the tab bar floating above a black
          gap; the html/body 100% chain fills the actual screen in both
          the app and the shell, so it wins and dvh stays as the first
-         fallback for anything that can't resolve the chain. */
-      #app { height: 100dvh; height: 100%; padding-top: env(safe-area-inset-top, 0px); }
+         fallback for anything that can't resolve the chain.
+         That chain turned out to still be the bottom-nav bug: on the
+         phone the % heights resolve against iOS's layout viewport,
+         which can end well short of the physical screen (dynamic
+         Safari chrome), so #app — tab bar included — stopped above
+         the bottom edge, and the identical near-black body showing
+         below the bar read as extra bar height. In the sandbox the
+         chain and the viewport agree, so the bar measured correctly
+         there. Pinning #app to the viewport with position:fixed
+         removes the % chain from the equation entirely: the tab bar
+         sits on the real bottom edge in the app, in Safari and in
+         the shell alike. */
+      #app { position: fixed; inset: 0; height: auto; padding-top: env(safe-area-inset-top, 0px); }
       /* The running session is a fixed overlay: its content starts
          below the notch too. */
       .session-inner { padding-top: max(12px, env(safe-area-inset-top, 0px)); }
       /* The floating plus keeps the same clearance above the tab bar,
          which grows by the home-indicator inset on notched phones. */
-      #notes-fan { bottom: calc(72px + max(4px, env(safe-area-inset-bottom, 0px))); }
+      #notes-fan { bottom: calc(var(--tabbar-h) + 24px); }
       /* The Notes list no longer scrolls under its filter panel at
          all — see the notes-list-mode column layout above. */
       /* Center-alignment pass: large buttons center their label (the
@@ -2435,15 +2458,39 @@ function exportLabs() {
     hiddenNotes: state.hiddenNotes.slice()
   };
   var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement("a");
-  a.href = url;
-  a.download = "labs.json";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
-  showToast("Exported " + payload.labs.length + (payload.labs.length === 1 ? " lab" : " labs") + " and " + payload.notes.length + (payload.notes.length === 1 ? " note" : " notes") + " to labs.json.");
+  var doneMsg = "Exported " + payload.labs.length + (payload.labs.length === 1 ? " lab" : " labs") + " and " + payload.notes.length + (payload.notes.length === 1 ? " note" : " notes") + " to labs.json.";
+  function downloadFallback() {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "labs.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+    showToast(doneMsg);
+  }
+  /* iOS turns an <a download> tap into a navigation to a blank
+     file-preview page instead of saving the file, so lead with the
+     system share sheet: hand it a real File and it opens on the tap
+     with Save to Files right there. Success is reported only after
+     the share actually completes; closing the sheet (AbortError)
+     is neither an export nor an error, and any other share failure
+     falls back to the plain download. Browsers without file
+     sharing get the download straight away. This runs synchronously
+     inside the tap handler, so the share keeps its user activation. */
+  var file = null;
+  try { file = new File([blob], "labs.json", { type: "application/json" }); } catch (e) { file = null; }
+  if (file && navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
+    navigator.share({ files: [file], title: "labs.json" }).then(function () {
+      showToast(doneMsg);
+    }, function (err) {
+      if (err && err.name === "AbortError") return;
+      downloadFallback();
+    });
+  } else {
+    downloadFallback();
+  }
 }
 function labsFileStatus(msg) {
   var el = document.getElementById("labs-file-status");
@@ -3745,7 +3792,7 @@ function renderStyleGuide() {
   h += rule("Tags", line("Every tag is blue: blue outline, blue text, translucent blue fill. A tag in use (a filter that's on) fills solid blue with black text.") + '<div class="row wrap" style="gap:6px;"><span class="tagchip">' + icon("tag", 14) + ' Traces</span><span class="tagchip" aria-pressed="true">Waving</span><span class="pairchip">Fixed Points</span></div>' + line("Blue is how you know it's a tag and not something to tap for an action — filter chips and note tags share the one style."));
   h += rule("Buttons", line("<strong>Standard</strong> (.btn) — pill, 13px semibold, surface border, sentence case. Used for Export, Clear, Add slot and every minor action; no per-button size or case overrides.") + line("<strong>Large</strong> (.btn-lg) — 48px tall, Archivo black, uppercase, 14px. Red = the primary action, volt = save / confirm, ghost = the secondary way out.") + line("<strong>Side-by-side pairs never wrap.</strong> The longer label keeps the width its text needs; the shorter button fills what's left (Save lab / Send to Timer, Save note / Save &amp; add another).") + line("<strong>Icon buttons</strong> — 40px circles with a 20px icon; 32px with a 16px icon for compact rows and for the slot shuffle / remove / + controls.") + '<div style="display:flex;gap:8px;"><button type="button" class="btn-lg btn-lg-volt btn-lg-pair" style="flex:1;">' + icon("bookmark", 20) + ' Save lab</button><button type="button" class="btn-lg btn-lg-primary btn-lg-pair" style="flex:0 0 auto;">' + icon("timer", 20) + " Send to Timer</button></div>");
   h += rule("Type", line("Archivo for headings, labels and buttons; the system sans for body text. Notes read large — 18px in the writer, 20px on the note's page. Tab labels are 10px uppercase; section titles 20px Archivo black uppercase."));
-  h += rule("Spacing & shape", line("Everything sits on a 4px grid — gaps, padding and margins in multiples of 4 (2px only for fine detail, 8px and up for rhythm): card padding 12–16px, rows 8px apart, sections 24px apart.") + line("Radii: 12px cards, 8px fields and inset boxes, full pills for buttons and chips. The content column is at most 768px wide.") + line("The bottom tab bar is a traditional short bar — about 44px plus the home-indicator inset — and every screen clears the notch with the top safe-area inset."));
+  h += rule("Spacing & shape", line("Everything sits on a 4px grid — gaps, padding and margins in multiples of 4 (2px only for fine detail, 8px and up for rhythm): card padding 12–16px, rows 8px apart, sections 24px apart.") + line("Radii: 12px cards, 8px fields and inset boxes, full pills for buttons and chips. The content column is at most 768px wide.") + line("The bottom tab bar is a traditional short bar — 40px of content (18px icon, label, tight padding) plus exactly the home-indicator inset and nothing else — pinned to the real bottom edge of the screen, and every screen clears the notch with the top safe-area inset."));
   h += rule("Behavior", line("The Timer opens on Create lab. Saving a lab whose slots exactly match an existing lab merges into it silently — one lab, with all its notes. The Notes tab opens the list; a new note opens only on the app's first open, or from the + menu."));
   h += "</div>";
   el.innerHTML = h;
@@ -3894,7 +3941,6 @@ function loadYouTubeApi() {
 function spliceEmbedUrl(clip) {
   var params = "autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&playsinline=1&disablekb=1&iv_load_policy=3&fs=0&enablejsapi=1" +
     "&start=" + Math.floor(clip.start) + "&end=" + Math.floor(clip.end);
-  if (/^https?:\/\//.test(window.location.origin)) params += "&origin=" + encodeURIComponent(window.location.origin);
   return "https://www.youtube-nocookie.com/embed/" + clip.videoId + "?" + params;
 }
 var dougie = {
@@ -3962,7 +4008,6 @@ function initDougiePlayer() {
   var cancelled = false;
   dougie.readyTimer = setTimeout(function () { if (!dougie.ready) dougieToFallback(); }, 9000);
   var first = dougie.clips[0];
-  var origin = /^https?:\/\//.test(window.location.origin) ? window.location.origin : undefined;
   loadYouTubeApi().then(function (YT) {
     if (cancelled || !dougie.active || dougie.useFallback) return;
     var host = document.getElementById("dougie-host");
@@ -3975,7 +4020,6 @@ function initDougiePlayer() {
       disablekb: 1, iv_load_policy: 3, fs: 0, enablejsapi: 1
     };
     if (first) { playerVars.start = Math.floor(first.start); playerVars.end = Math.floor(first.end); }
-    if (origin) { playerVars.origin = origin; playerVars.widget_referrer = origin; }
     dougie.player = new YT.Player(mount, {
       host: "https://www.youtube-nocookie.com",
       videoId: first ? first.videoId : undefined,
@@ -4224,78 +4268,864 @@ function dougieRemoveClip(i) {
 }
 
 /* =====================================================================
-   Conductor — a chaos double-pendulum movement director. Up to 20
-   near-identical double pendulums launch together and diverge into
-   chaos, each leaving a colored trail; follow the big yellow lead bob:
-   where it is is where to move toward, how fast it moves is how fast
-   to move. The pivot itself travels — random-walking a drawn 4x8 grid
-   that fills the screen, around a drawn circle, or through projected
-   3D space. Defaults: speed 0.75x, one pendulum, and the lead's trail
-   slowly cycles through colors as it moves.
+   Conductor — two movement studies on the grid, plopped in from the
+   animation sandbox. A switcher beside the play/pause button picks
+   the active one; each keeps its own state while the other shows.
+
+   Four points: four points sit on grid intersections and travel the
+   grid lines in pure linear hops — mostly one at a time, sometimes
+   two, rarely three. There are no lines joining them: as a point
+   travels it lights the path behind it, leaving a bright colored
+   trail that keeps at least its last two movements on the grid, and
+   sometimes the trail itself ripples like a wave. The grid
+   underneath never moves.
+
+   Pendulum: the double pendulum — the Conductor's own physics,
+   integrator verbatim — with a roaming fulcrum. The fulcrum glides
+   along the grid lines between points while the pendulum swings on
+   beneath it. The end bob and the elbow can each stick to a grid
+   point mid-swing, seamlessly, no pause: a random window opens
+   every few seconds (the bob's window is set by the Rest slider),
+   and a pass over a point while the window is open swaps the roles
+   in the same frame — the stuck point becomes the new fulcrum and
+   the swing carries straight through.
+
+   Play/pause and the edit sheet govern everything, as before.
    ===================================================================== */
 var conductor = {
-  playing: true, editOpen: false, speed: 0.75, chaos: 6, count: 1, trail: 60,
-  pivotMode: "grid", follow: "",
-  pendulums: [], t: 0, raf: null, lastTs: 0,
-  pivotT: 0, walk: null
+  playing: true, editOpen: false, mode: "grid",
+  raf: null, lastTs: 0
 };
-function conductorReset() {
-  conductor.pendulums = [];
-  conductor.t = 0;
-  conductor.pivotT = 0;
-  conductor.walk = null;
-  var spread = 0.0016 * conductor.chaos; /* per-pendulum launch offset */
-  for (var i = 0; i < conductor.count; i++) {
-    var off = (i - (conductor.count - 1) / 2) * spread;
-    conductor.pendulums.push({
-      a1: 2.15 + off, a2: 2.75 + off * 1.7, w1: 0, w2: 0, trail: [],
-      hue: Math.round((160 + i * 40) % 360)
+if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  conductor.playing = false;
+}
+function conductorReset() { conductorAnim.reset(); }
+
+var conductorAnim = (function () {
+  "use strict";
+
+  var COLS = 4;            // grid cells across  -> nodes 0..4
+  var ROWS = 8;            // grid cells down    -> nodes 0..8
+  var STEP_TIME = 0.55;    // seconds per cell travelled (at 1x speed)
+  var RIPPLE_LIFE = 1.5;   // seconds a ripple lives
+
+  var S = {
+    mode: "grid",
+    speed: 1,
+    speeds: { grid: 1, pendulum: 0.6 }, // per-animation speed; pendulum defaults to 0.6
+    rippleChance: 0.35,
+    restBase: 0.7,
+    fulcrumInterval: 2.5 // seconds of swinging between fulcrum glides (pendulum only)
+  };
+
+  var view = { w: 0, h: 0, cell: 40, ox: 0, oy: 0 };
+
+  /* The grid covers the screen, on the footprint the Conductor has
+     always used: nearly the full width, from near the top edge down
+     to just above the play/pause button — but the cells stay
+     square, as the studies were built, fitted inside that area. */
+  function computeView(w, h) {
+    var gw = w * 0.94;
+    var gTop = h * 0.03;
+    var gBottom = Math.max(gTop + 120, h - 172);
+    view.w = w; view.h = h;
+    view.cell = Math.max(10, Math.min(gw / COLS, (gBottom - gTop) / ROWS));
+    view.ox = (w - view.cell * COLS) / 2;
+    view.oy = gTop + ((gBottom - gTop) - view.cell * ROWS) / 2;
+  }
+  function toPx(gx, gy) {
+    return { x: view.ox + gx * view.cell, y: view.oy + gy * view.cell };
+  }
+
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  function strokePath(ctx, pts) {
+    ctx.beginPath();
+    pts.forEach(function (pt, i) {
+      if (i === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
+    });
+    ctx.stroke();
+  }
+
+  /* ---------------- four points: points & beats ---------------- */
+
+  var POINT_COLORS = ["#ff4d2e", "#ffd23f", "#57b6ff", "#3ddc97"];
+  var HOME = [
+    { x: 2, y: 3 },
+    { x: 1, y: 4 },
+    { x: 3, y: 4 },
+    { x: 2, y: 5 }
+  ];
+
+  function makePoint(i) {
+    return {
+      color: POINT_COLORS[i],
+      gx: HOME[i].x, gy: HOME[i].y,       // node it rests on
+      x: HOME[i].x, y: HOME[i].y,         // live position (grid units)
+      path: null,                          // node list while moving
+      t: 0,                                // 0..1 across whole move
+      segSeen: -1,                         // last segment index entered
+      moveCount: 0,                        // movements this point has made
+      moveId: 0,                           // movement in progress
+      history: [],                         // trail segments left on the grid
+      activeSeg: null,                     // segment being painted right now
+      trail: []                            // recent positions {x,y,age}
+    };
+  }
+
+  var points = POINT_COLORS.map(function (_, i) { return makePoint(i); });
+
+  var phase = "rest";        // 'rest' | 'move'
+  var phaseT = 0;
+  var restDur = 0.35;
+  var movers = [];
+
+  function randomPath(p) {
+    var steps = 1 + Math.floor(Math.random() * 3); // 1..3 cells
+    var nodes = [{ x: p.gx, y: p.gy }];
+    var cx = p.gx, cy = p.gy, px = -1, py = -1;
+    for (var i = 0; i < steps; i++) {
+      var opts = [];
+      if (cx > 0) opts.push([cx - 1, cy]);
+      if (cx < COLS) opts.push([cx + 1, cy]);
+      if (cy > 0) opts.push([cx, cy - 1]);
+      if (cy < ROWS) opts.push([cx, cy + 1]);
+      var fresh = opts.filter(function (o) { return !(o[0] === px && o[1] === py); });
+      var choice = pick(fresh.length ? fresh : opts);
+      px = cx; py = cy; cx = choice[0]; cy = choice[1];
+      nodes.push({ x: cx, y: cy });
+    }
+    return nodes;
+  }
+
+  function startBeat() {
+    var r = Math.random();
+    var n = r < 0.68 ? 1 : r < 0.93 ? 2 : 3;   // mostly 1, sometimes 2, rarely 3
+    var idx = [0, 1, 2, 3];
+    for (var i = idx.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = idx[i]; idx[i] = idx[j]; idx[j] = tmp;
+    }
+    movers = idx.slice(0, n).map(function (k) { return points[k]; });
+    movers.forEach(function (p) {
+      p.path = randomPath(p);
+      p.t = 0;
+      p.segSeen = -1;
+      p.moveId = ++p.moveCount;
+    });
+    phase = "move";
+    phaseT = 0;
+  }
+
+  function finishBeat() {
+    movers.forEach(function (p) {
+      var end = p.path[p.path.length - 1];
+      p.gx = end.x; p.gy = end.y;
+      p.x = end.x; p.y = end.y;
+      p.path = null;
+      // last segment of the move ends fully painted
+      if (p.activeSeg) p.activeSeg.prog = p.activeSeg.s1 - p.activeSeg.s0;
+      p.activeSeg = null;
+    });
+    movers = [];
+    phase = "rest";
+    phaseT = 0;
+    restDur = S.restBase * rand(0.4, 1.6);
+  }
+
+  /* ---------------- four points: trails & ripples ----------------
+     The colored part of the grid is the trail a point leaves
+     behind as it travels. A point's trail keeps at least its
+     last two movements on the grid; an older movement fades
+     out only once two newer ones are recorded. The ripple
+     lives on the trail: the colored line itself waves, the
+     grid line under it does not. */
+
+  function onEnterSegment(p, a, b) {
+    // The point lights the path as it goes: a segment starts with
+    // nothing painted and fills in behind the point as it crosses.
+    // The segment just left is fully painted by definition.
+    if (p.activeSeg) p.activeSeg.prog = p.activeSeg.s1 - p.activeSeg.s0;
+    var horiz = a.y === b.y;
+    var seg = {
+      axis: horiz ? "h" : "v",
+      index: horiz ? a.y : a.x,
+      s0: horiz ? Math.min(a.x, b.x) : Math.min(a.y, b.y),
+      s1: horiz ? Math.max(a.x, b.x) : Math.max(a.y, b.y),
+      move: p.moveId, color: p.color,
+      fadeT: 0,
+      prog: 0,               // grid units painted so far (from entry end)
+      from: horiz ? a.x : a.y, // entry end along the segment's axis
+      ripple: false, rippleT: 0, dir: 1
+    };
+    p.activeSeg = seg;
+    // occasionally the trail itself answers with a wave
+    if (Math.random() < S.rippleChance) {
+      seg.ripple = true;
+      seg.dir = horiz ? (Math.sign(b.x - a.x) || 1) : (Math.sign(b.y - a.y) || 1);
+    }
+    p.history.push(seg);
+  }
+
+  // Perpendicular wave offset of a rippling trail at position s
+  // along it, in grid units. Pinned at both ends of the painted
+  // span — only the part the point has actually crossed waves.
+  function traceWave(seg, s, lo, hi) {
+    var span = hi - lo;
+    if (span <= 0) return 0;
+    var u = (s - lo) / span;                          // 0..1 along the painted trail
+    var windowEnv = Math.pow(Math.sin(Math.PI * u), 1.4);
+    var age = seg.rippleT / RIPPLE_LIFE;
+    var fadeIn = Math.min(1, seg.rippleT / 0.15);
+    var fadeOut = age < 0.55 ? 1 : 1 - (age - 0.55) / 0.45;
+    var wave = (s - lo) * 5.2 - seg.dir * seg.rippleT * 13.0;
+    return Math.sin(wave) * windowEnv * fadeIn * Math.max(0, fadeOut) * 0.13;
+  }
+
+  // Brightness of a trail segment: the movement in progress is
+  // brightest, the previous movement a step dimmer, and anything
+  // older fades away over TRAIL_FADE seconds.
+  var TRAIL_FADE = 0.6;
+  function segAlpha(p, seg) {
+    var old = p.moveCount - seg.move;
+    if (old <= 0) return 0.95;
+    if (old === 1) return 0.7;
+    return Math.max(0, 0.7 * (1 - seg.fadeT / TRAIL_FADE));
+  }
+
+  function updateMover(p, dt) {
+    var segs = p.path.length - 1;
+    var dur = segs * STEP_TIME;
+    p.t += dt / dur;
+    var t = Math.min(1, p.t);
+    var dist = t * segs;                     // pure linear: constant speed along the path
+    var seg = Math.min(segs - 1, Math.floor(dist));
+    var frac = dist - seg;
+
+    if (seg !== p.segSeen) {
+      p.segSeen = seg;
+      onEnterSegment(p, p.path[seg], p.path[seg + 1]);
+    }
+    var a = p.path[seg], b = p.path[seg + 1];
+    p.x = a.x + (b.x - a.x) * frac;
+    p.y = a.y + (b.y - a.y) * frac;
+    // The point lights the path: the active segment is painted
+    // only as far as the point has actually travelled across it.
+    if (p.activeSeg && p.activeSeg.move === p.moveId) {
+      var span = p.activeSeg.s1 - p.activeSeg.s0;
+      var pos = p.activeSeg.axis === "h" ? p.x : p.y;
+      p.activeSeg.prog = Math.max(0, Math.min(span, Math.abs(pos - p.activeSeg.from)));
+    }
+    return p.t >= 1;
+  }
+
+  function stepGrid(dt) {
+    var i;
+    if (phase === "rest") {
+      phaseT += dt;
+      if (phaseT >= restDur) startBeat();
+    } else {
+      var done = true;
+      for (i = 0; i < movers.length; i++) {
+        if (!updateMover(movers[i], dt)) done = false;
+      }
+      if (done) finishBeat();
+    }
+
+    points.forEach(function (p) {
+      for (var k = p.history.length - 1; k >= 0; k--) {
+        var seg = p.history[k];
+        if (seg.ripple && seg.rippleT < RIPPLE_LIFE) seg.rippleT += dt;
+        if (p.moveCount - seg.move >= 2) {
+          seg.fadeT += dt;
+          if (seg.fadeT >= TRAIL_FADE) p.history.splice(k, 1);
+        }
+      }
+    });
+    points.forEach(function (p) {
+      if (p.path) {
+        p.trail.push({ x: p.x, y: p.y, age: 0 });
+      }
+      for (var k = p.trail.length - 1; k >= 0; k--) {
+        p.trail[k].age += dt;
+        if (p.trail[k].age > 0.38) p.trail.splice(k, 1);
+      }
     });
   }
-}
-function pendulumStep(p, dt) {
-  var g = 9.81, L1 = 1, L2 = 1, m1 = 1, m2 = 1;
-  var a1 = p.a1, a2 = p.a2, w1 = p.w1, w2 = p.w2;
-  var d = a1 - a2;
-  var den = 2 * m1 + m2 - m2 * Math.cos(2 * d);
-  var dw1 = (-g * (2 * m1 + m2) * Math.sin(a1) - m2 * g * Math.sin(a1 - 2 * a2) - 2 * Math.sin(d) * m2 * (w2 * w2 * L2 + w1 * w1 * L1 * Math.cos(d))) / (L1 * den);
-  var dw2 = (2 * Math.sin(d) * (w1 * w1 * L1 * (m1 + m2) + g * (m1 + m2) * Math.cos(a1) + w2 * w2 * L2 * m2 * Math.cos(d))) / (L2 * den);
-  p.w1 += dw1 * dt; p.w2 += dw2 * dt;
-  p.a1 += p.w1 * dt; p.a2 += p.w2 * dt;
-}
+
+  /* ---------------- pendulum ----------------
+     The swing itself is the Conductor's double pendulum, physics
+     kept exactly as it has always been here:
+       - two arms, two bobs: angles a1/a2, velocities w1/w2
+       - pendulumStep() below is the integrator verbatim —
+         g = 9.81, L1 = L2 = 1, m1 = m2 = 1
+       - launched at rest from a1 = 2.15, a2 = 2.75, stepped
+         8 substeps per frame
+       - the end bob leaves a trail, half as long as it once was:
+         up to 180 points, hue cycling as (t x 5 + position x 140)
+         mod 360, in chunks of 10
+     L1/L2 in the equations are unit lengths; len1/len2 here are
+     only how long the arms are drawn, in grid units — 1.8 + 1.8,
+     lengthened so the elbow, not just the bob, regularly sweeps
+     past grid points it can stick to.
+     The roaming:
+       - the fulcrum glides along the grid lines to a new point,
+         pure linear, the pendulum swinging on beneath it the
+         whole way; and
+       - a seamless in-swing attach: there is NO detach / travel /
+         pause phase for the bob. While swinging, an attach
+         window opens only every few seconds — the Rest slider
+         sets how long before it opens. If, while that window is
+         open, the end bob passes within ATTACH_THRESHOLD of a
+         grid point in its natural motion, it attaches there
+         instantly, in the same frame: that point becomes the new
+         fulcrum and the previous fulcrum becomes the new end bob.
+         Positions and angular velocities carry over untouched,
+         so the physics never stops. Most passes do nothing —
+         the window is shut.
+       - the elbow (middle joint) sticks too, on its own random
+         window: when it passes a point while its window is open,
+         that point becomes the new fulcrum, the old fulcrum
+         becomes the new elbow, and the bob stays the bob. */
+
+  // The Conductor's pendulumStep, unchanged.
+  function pendulumStep(p, dt) {
+    var g = 9.81, L1 = 1, L2 = 1, m1 = 1, m2 = 1;
+    var a1 = p.a1, a2 = p.a2, w1 = p.w1, w2 = p.w2;
+    var d = a1 - a2;
+    var den = 2 * m1 + m2 - m2 * Math.cos(2 * d);
+    var dw1 = (-g * (2 * m1 + m2) * Math.sin(a1) - m2 * g * Math.sin(a1 - 2 * a2) - 2 * Math.sin(d) * m2 * (w2 * w2 * L2 + w1 * w1 * L1 * Math.cos(d))) / (L1 * den);
+    var dw2 = (2 * Math.sin(d) * (w1 * w1 * L1 * (m1 + m2) + g * (m1 + m2) * Math.cos(a1) + w2 * w2 * L2 * m2 * Math.cos(d))) / (L2 * den);
+    p.w1 += dw1 * dt; p.w2 += dw2 * dt;
+    p.a1 += p.w1 * dt; p.a2 += p.w2 * dt;
+  }
+
+  // How close (grid units) the bob must pass to a grid point
+  // for an open attach window to catch it.
+  var ATTACH_THRESHOLD = 0.38;
+  // The Rest slider determines the window for switching bob
+  // and fulcrum roles: the delay before the next attach window
+  // opens scales directly with Rest. Rest 0 means the window
+  // is always open; larger Rest means rarer swaps. At the 0.7s
+  // default this is roughly 2.5–6s.
+  function nextAttachDelay() {
+    if (S.restBase <= 0) return 0;
+    return S.restBase * rand(3.5, 8.5);
+  }
+
+  function makePendulum() {
+    var p = {
+      fx: 2, fy: 2,              // fulcrum position (grid units, floats while gliding)
+      a1: 2.15, a2: 2.75,        // arm angles — the Conductor's launch
+      w1: 0, w2: 0,              // angular velocities — launched at rest
+      len1: 1.8, len2: 1.8,      // drawn arm lengths, grid units
+      jx: 0, jy: 0,              // middle joint live position (grid units)
+      bx: 0, by: 0,              // end bob live position (grid units)
+      trail: [],                 // end bob trail, as in the Conductor
+      t: 0,                      // sim clock for the trail's hue cycle
+      phase: "swing",            // swing | fmove  (no bob-travel phase)
+      phaseT: 0,
+      swingDur: S.fulcrumInterval,
+      path: null, rt: 0,         // node path + progress for a fulcrum glide
+      attachIn: nextAttachDelay(), // seconds until the bob attach window opens
+      elbowIn: rand(3, 8)        // seconds until the elbow stick window opens
+    };
+    pendPositions(p);
+    return p;
+  }
+
+  // Joint and end-bob positions from the fulcrum and the angles.
+  function pendPositions(p) {
+    p.jx = p.fx + p.len1 * Math.sin(p.a1);
+    p.jy = p.fy + p.len1 * Math.cos(p.a1);
+    p.bx = p.jx + p.len2 * Math.sin(p.a2);
+    p.by = p.jy + p.len2 * Math.cos(p.a2);
+  }
+
+  function pendReach(p) { return p.len1 + p.len2; }
+
+  var pend = makePendulum();
+
+  // Node-by-node path along the grid lines from (x0,y0) to (x1,y1),
+  // interleaving the horizontal and vertical steps.
+  function gridPath(x0, y0, x1, y1) {
+    var nodes = [{ x: x0, y: y0 }];
+    var x = x0, y = y0, xs = x1 - x0, ys = y1 - y0;
+    while (xs !== 0 || ys !== 0) {
+      var doX;
+      if (xs === 0) doX = false;
+      else if (ys === 0) doX = true;
+      else doX = Math.random() < Math.abs(xs) / (Math.abs(xs) + Math.abs(ys));
+      if (doX) { x += Math.sign(xs); xs -= Math.sign(xs); }
+      else { y += Math.sign(ys); ys -= Math.sign(ys); }
+      nodes.push({ x: x, y: y });
+    }
+    return nodes;
+  }
+
+  // Position along a node path at t in 0..1 — pure linear,
+  // constant speed between points (this eases nothing; the
+  // pendulum's swing physics is separate and untouched).
+  function pathPos(path, t) {
+    var segs = path.length - 1;
+    var dist = Math.min(1, t) * segs;
+    var seg = Math.min(segs - 1, Math.floor(dist));
+    var frac = dist - seg;
+    var a = path[seg], b = path[seg + 1];
+    return { x: a.x + (b.x - a.x) * frac, y: a.y + (b.y - a.y) * frac };
+  }
+
+  function startPendRelocation() {
+    // Only the fulcrum glide is scheduled this way. The bob never
+    // gets a scheduled relocation — its swap happens
+    // opportunistically, mid-swing, in trySeamlessAttach().
+    var p = pend;
+    var fx = Math.round(p.fx), fy = Math.round(p.fy);
+    var cand, tries;
+    var target = null;
+    tries = 0;
+    while (!target && tries++ < 40) {
+      cand = { x: Math.floor(rand(0, COLS + 1)), y: Math.floor(rand(0, ROWS + 1)) };
+      var d = Math.abs(cand.x - fx) + Math.abs(cand.y - fy);
+      if (d >= 1 && d <= 4 && cand.y + pendReach(p) <= ROWS + 0.5) target = cand;
+    }
+    if (!target) { p.phaseT = 0; p.swingDur = 1; return; }
+    p.path = gridPath(fx, fy, target.x, target.y);
+    p.rt = 0; p.phase = "fmove"; p.phaseT = 0;
+  }
+
+  // Seamless in-swing attach. Called every physics frame while
+  // swinging (or gliding). The attach window opens only once
+  // every few seconds, at a random interval (p.attachIn counts
+  // down to it); while the window is open, the first pass of
+  // the bob within ATTACH_THRESHOLD of a grid point attaches —
+  // in this same frame, with no pause, no travel phase and no
+  // velocity reset. Every other pass does nothing.
+  function trySeamlessAttach(p, dt) {
+    if (p.attachIn > 0) { p.attachIn -= dt; return false; }
+    var nx = Math.max(0, Math.min(COLS, Math.round(p.bx)));
+    var ny = Math.max(0, Math.min(ROWS, Math.round(p.by)));
+    if (Math.hypot(p.bx - nx, p.by - ny) > ATTACH_THRESHOLD) return false;
+    var span = Math.hypot(nx - p.fx, ny - p.fy);
+    // The new span (new fulcrum -> old fulcrum) must make a
+    // workable pendulum and stay on the grid. The cap scales
+    // with the pendulum's current reach, which the longer
+    // arms (and earlier swaps) can push past the old 3.4.
+    if (span < 1.8 || span > pendReach(p) + 0.7) return false;
+    if (ny + span > ROWS + 0.5) return false;
+    var newLen1 = Math.hypot(p.jx - nx, p.jy - ny);
+    var newLen2 = Math.hypot(p.fx - p.jx, p.fy - p.jy);
+    if (newLen1 < 0.4 || newLen2 < 0.4) return false;
+    // Swaps must not grow the pendulum: cap the total reach
+    // a little above the 1.8 + 1.8 it launches with.
+    if (newLen1 + newLen2 > 4.4) return false;
+    // --- the swap, in place ---
+    // New arm 1 runs new fulcrum -> the same joint; new arm 2
+    // runs the same joint -> the old fulcrum, which is now the
+    // end bob. Recomputing the angles from the live positions
+    // makes pendPositions() reproduce the joint and the new
+    // bob exactly where they already are, and w1/w2 are left
+    // untouched — the motion carries straight through.
+    var oldFx = p.fx, oldFy = p.fy;
+    p.fx = nx; p.fy = ny;
+    p.len1 = newLen1; p.len2 = newLen2;
+    p.a1 = Math.atan2(p.jx - nx, p.jy - ny);
+    p.a2 = Math.atan2(oldFx - p.jx, oldFy - p.jy);
+    pendPositions(p);
+    // The trail belonged to the old bob's path; the new bob
+    // starts its own from the old fulcrum, so the trail does
+    // not draw a streak across the swap.
+    p.trail = [];
+    // If a fulcrum glide was in progress, it is moot now.
+    p.phase = "swing"; p.phaseT = 0;
+    p.swingDur = S.fulcrumInterval * rand(0.8, 1.3);
+    // Window shuts; the next one opens in a random few seconds.
+    p.attachIn = nextAttachDelay();
+    return true;
+  }
+
+  // The elbow sticks too. The middle joint gets its own
+  // random window (p.elbowIn, 3–9s, independent of the bob's
+  // Rest-driven window): while it is open, if the elbow
+  // passes within ATTACH_THRESHOLD of a grid point in its
+  // natural swing, it sticks there in the same frame — that
+  // point becomes the new fulcrum, the old fulcrum becomes
+  // the new elbow, and the bob stays the bob. Seamless like
+  // the bob attach — no pause, positions do not jump, and
+  // the trail carries on because it still belongs to the
+  // same bob — except the rates are re-derived from the
+  // points' real motion (see the stick itself for why).
+  // Most passes do nothing — the window is shut.
+  function tryElbowStick(p, dt) {
+    if (p.elbowIn > 0) { p.elbowIn -= dt; return false; }
+    var nx = Math.max(0, Math.min(COLS, Math.round(p.jx)));
+    var ny = Math.max(0, Math.min(ROWS, Math.round(p.jy)));
+    if (Math.hypot(p.jx - nx, p.jy - ny) > ATTACH_THRESHOLD) return false;
+    // The new pendulum hangs from the elbow's point: arm 1
+    // runs point -> old fulcrum, arm 2 runs old fulcrum -> bob.
+    // Both must be workable lengths and the whole thing must
+    // still fit on the grid below the new fulcrum.
+    var newLen1 = Math.hypot(p.fx - nx, p.fy - ny);
+    var newLen2 = Math.hypot(p.bx - p.fx, p.by - p.fy);
+    if (newLen1 < 0.5 || newLen2 < 0.5) return false;
+    // Same no-growth rule as the bob attach: total reach
+    // stays near the 1.8 + 1.8 it launches with.
+    if (newLen1 + newLen2 > 4.4) return false;
+    if (ny + newLen1 + newLen2 > ROWS + 0.6) return false;
+    // --- the stick, in place ---
+    // Unlike the bob attach, the velocities cannot carry over
+    // untouched here: arm 2 after the stick is the old
+    // fulcrum -> bob span, which was never a physical rod, so
+    // reusing w2 for it pumps energy in stick after stick
+    // until the integrator blows up. Instead the new rates
+    // come from the points' actual motion: the old fulcrum
+    // was the pivot — stationary — so the new arm 1 starts
+    // at rest (w1 = 0), and the new w2 is the bob's real
+    // tangential rate around the old fulcrum, so the bob
+    // keeps the speed it actually had. Positions, as ever,
+    // do not jump.
+    var jvx = p.len1 * p.w1 * Math.cos(p.a1);
+    var jvy = -p.len1 * p.w1 * Math.sin(p.a1);
+    var bvx = jvx + p.len2 * p.w2 * Math.cos(p.a2);
+    var bvy = jvy - p.len2 * p.w2 * Math.sin(p.a2);
+    var oldFx = p.fx, oldFy = p.fy;
+    p.fx = nx; p.fy = ny;
+    p.len1 = newLen1; p.len2 = newLen2;
+    p.a1 = Math.atan2(oldFx - nx, oldFy - ny);
+    p.a2 = Math.atan2(p.bx - oldFx, p.by - oldFy);
+    p.w1 = 0;
+    p.w2 = (bvx * Math.cos(p.a2) - bvy * Math.sin(p.a2)) / newLen2;
+    pendPositions(p);
+    // If a fulcrum glide was in progress, it is moot now.
+    p.phase = "swing"; p.phaseT = 0;
+    p.swingDur = S.fulcrumInterval * rand(0.8, 1.3);
+    // Window shuts; the next one opens at random in 3–9s.
+    p.elbowIn = rand(3, 9);
+    return true;
+  }
+
+  // Advance the double pendulum the Conductor's way: 8 substeps
+  // of pendulumStep across the frame, then record the end bob's
+  // trail point (capped at 180 — half the old 60 x 6).
+  function stepPendulumPhysics(p, dt) {
+    var steps = 8, k;
+    for (k = 0; k < steps; k++) pendulumStep(p, dt / steps);
+    p.t += dt;
+    pendPositions(p);
+    p.trail.push({ x: p.bx, y: p.by });
+    while (p.trail.length > 180) p.trail.shift();
+  }
+
+  function stepPendulum(dt) {
+    var p = pend;
+    p.phaseT += dt;
+    if (p.phase === "swing") {
+      stepPendulumPhysics(p, dt);
+      // No pause, ever: the bob may attach mid-swing the
+      // moment it passes a point while its window is open —
+      // and if it doesn't, the elbow may stick instead.
+      if (!trySeamlessAttach(p, dt)) tryElbowStick(p, dt);
+      if (p.phase === "swing" && p.phaseT >= p.swingDur) startPendRelocation();
+    } else if (p.phase === "fmove") {
+      p.rt += dt / ((p.path.length - 1) * STEP_TIME);
+      var pos = pathPos(p.path, p.rt);
+      p.fx = pos.x; p.fy = pos.y;
+      // The pivot travels while its pendulum keeps stepping,
+      // so the swing runs on untouched under the glide.
+      stepPendulumPhysics(p, dt);
+      if (!trySeamlessAttach(p, dt)) tryElbowStick(p, dt);
+      if (p.phase !== "fmove") return; // a stick/attach took over
+      if (p.rt >= 1) {
+        var end = p.path[p.path.length - 1];
+        p.fx = end.x; p.fy = end.y;
+        pendPositions(p);
+        p.phase = "swing"; p.phaseT = 0;
+        p.swingDur = S.fulcrumInterval * rand(0.8, 1.3);
+      }
+    }
+  }
+
+  /* ---------------- drawing ---------------- */
+
+  function drawGrid(ctx) {
+    // The grid itself is still — only the colored trails on it ripple.
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(240,235,255,0.10)";
+    var c;
+    for (c = 0; c <= COLS; c++) strokePath(ctx, [toPx(c, 0), toPx(c, ROWS)]);
+    for (c = 0; c <= ROWS; c++) strokePath(ctx, [toPx(0, c), toPx(COLS, c)]);
+    // intersection dots
+    ctx.fillStyle = "rgba(240,235,255,0.13)";
+    for (var x = 0; x <= COLS; x++) {
+      for (var y = 0; y <= ROWS; y++) {
+        var d = toPx(x, y);
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, 1.6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  function drawTrails(ctx) {
+    // The trails: bright colored lines the points left on the
+    // grid, holding at least each point's last two movements.
+    // A rippling trail is drawn as the wave itself — the colored
+    // line bends, brighter and a touch thicker while it waves.
+    points.forEach(function (p) {
+      p.history.forEach(function (seg) {
+        var alpha = segAlpha(p, seg);
+        if (alpha <= 0) return;
+        // Only the part of the segment the point has crossed is lit.
+        var prog = seg.prog == null ? (seg.s1 - seg.s0) : seg.prog;
+        if (prog <= 0.001) return;
+        var from = seg.from == null ? seg.s0 : seg.from;
+        var lo = from <= seg.s0 ? seg.s0 : seg.s1 - prog;
+        var hi = from <= seg.s0 ? seg.s0 + prog : seg.s1;
+        var pts = [];
+        if (seg.ripple) {
+          for (var s = lo; s <= hi + 0.001; s += 0.08) {
+            var off = traceWave(seg, s, lo, hi);
+            pts.push(seg.axis === "h" ? toPx(s, seg.index + off) : toPx(seg.index + off, s));
+          }
+        } else if (seg.axis === "h") {
+          pts = [toPx(lo, seg.index), toPx(hi, seg.index)];
+        } else {
+          pts = [toPx(seg.index, lo), toPx(seg.index, hi)];
+        }
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.strokeStyle = seg.color;
+        // soft glow under the line
+        ctx.globalAlpha = alpha * 0.22;
+        ctx.lineWidth = Math.max(5, view.cell * (seg.ripple ? 0.3 : 0.26));
+        strokePath(ctx, pts);
+        // bright core
+        ctx.globalAlpha = alpha;
+        ctx.lineWidth = Math.max(2.5, view.cell * (seg.ripple ? 0.12 : 0.1));
+        strokePath(ctx, pts);
+        ctx.globalAlpha = 1;
+      });
+    });
+  }
+
+  function drawPoints(ctx) {
+    points.forEach(function (p) {
+      // fading trail
+      if (p.trail.length > 1) {
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        for (var i = 1; i < p.trail.length; i++) {
+          var a = p.trail[i - 1], b = p.trail[i];
+          var alpha = (1 - b.age / 0.38) * 0.35;
+          ctx.strokeStyle = p.color;
+          ctx.globalAlpha = alpha;
+          ctx.lineWidth = Math.max(2, view.cell * 0.07);
+          strokePath(ctx, [toPx(a.x, a.y), toPx(b.x, b.y)]);
+        }
+        ctx.globalAlpha = 1;
+      }
+      var c = toPx(p.x, p.y);
+      var r = view.cell * (p.path ? 0.17 : 0.145);
+      // glow
+      var g = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, r * 3.1);
+      g.addColorStop(0, p.color);
+      g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.globalAlpha = 0.30;
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, r * 3.1, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      // body
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, r, 0, Math.PI * 2);
+      ctx.fill();
+      // white core
+      ctx.fillStyle = "rgba(255,255,255,0.92)";
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, r * 0.42, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  function drawPendulum(ctx) {
+    var p = pend;
+    var f = toPx(p.fx, p.fy);
+    var j = toPx(p.jx, p.jy);
+    var b = toPx(p.bx, p.by);
+    // the end bob's trail, coloured the Conductor's way: short
+    // chunks, each a step further along the wheel plus a slow
+    // drift on the clock
+    if (p.trail.length > 1) {
+      var pts = p.trail.map(function (q) { return toPx(q.x, q.y); });
+      var chunk = 10;
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      for (var s = 0; s < pts.length - 1; s += chunk) {
+        var end = Math.min(pts.length - 1, s + chunk);
+        var hue = Math.round((p.t * 5 + (s / Math.max(1, pts.length)) * 140) % 360);
+        ctx.strokeStyle = "hsla(" + hue + ", 90%, 65%, 0.85)";
+        var segPts = [];
+        for (var jj = s; jj <= end; jj++) segPts.push(pts[jj]);
+        strokePath(ctx, segPts);
+      }
+    }
+    // both arms — the bob is always attached now; there is no
+    // detached travel state to draw
+    ctx.strokeStyle = "rgba(242,238,247,0.55)";
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    strokePath(ctx, [f, j, b]);
+    // middle joint: small white dot, as in the Conductor
+    ctx.fillStyle = "#f5efe8";
+    ctx.beginPath();
+    ctx.arc(j.x, j.y, 4, 0, Math.PI * 2);
+    ctx.fill();
+    // fulcrum: volt ring planted on its point
+    ctx.strokeStyle = "#ffd23f";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, view.cell * 0.16, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = "#ffd23f";
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, 3, 0, Math.PI * 2);
+    ctx.fill();
+    // bob: red point, same treatment as the grid-study points
+    var r = view.cell * 0.17;
+    var g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, r * 3.1);
+    g.addColorStop(0, "#ff4d2e");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.globalAlpha = 0.30;
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, r * 3.1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = "#ff4d2e";
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.92)";
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, r * 0.42, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  /* ---------------- controls surface ---------------- */
+
+  return {
+    state: S,
+    step: function (dt) {
+      if (S.mode === "pendulum") stepPendulum(dt);
+      else stepGrid(dt);
+    },
+    draw: function (ctx, w, h) {
+      computeView(w, h);
+      ctx.fillStyle = "#0d0b10";
+      ctx.fillRect(0, 0, w, h);
+      drawGrid(ctx);
+      if (S.mode === "pendulum") drawPendulum(ctx);
+      else { drawTrails(ctx); drawPoints(ctx); }
+    },
+    setMode: function (m) { S.speeds[S.mode] = S.speed; S.mode = m; S.speed = S.speeds[m]; },
+    setSpeed: function (v) { S.speed = v; S.speeds[S.mode] = v; },
+    setRipple: function (v) { S.rippleChance = v; },
+    setRest: function (v) {
+      S.restBase = v;
+      // In the pendulum, Rest sets the attach window: rescale
+      // any pending countdown so the change takes effect now.
+      if (pend && pend.attachIn > 0) pend.attachIn = nextAttachDelay();
+    },
+    setFulcrum: function (v) {
+      S.fulcrumInterval = v;
+      // Apply promptly: if the pendulum is mid-swing, cap its
+      // remaining swing at the new interval so lowering the
+      // slider makes the fulcrum move sooner.
+      if (pend && pend.phase === "swing") {
+        pend.swingDur = Math.min(pend.swingDur, S.fulcrumInterval * 1.3);
+        if (pend.phaseT > pend.swingDur) pend.phaseT = pend.swingDur;
+      }
+    },
+    reset: function () {
+      if (S.mode === "pendulum") { pend = makePendulum(); return; }
+      points = POINT_COLORS.map(function (_, i) { return makePoint(i); });
+      movers = [];
+      phase = "rest";
+      phaseT = 0;
+      restDur = 0.3;
+    },
+    rippleNow: function () {
+      // Ripple a trail already on the grid, if there is one.
+      var all = [];
+      points.forEach(function (p) {
+        p.history.forEach(function (seg) { all.push(seg); });
+      });
+      if (all.length) {
+        var seg = pick(all);
+        seg.ripple = true;
+        seg.rippleT = 0;
+        seg.dir = Math.random() < 0.5 ? 1 : -1;
+        return;
+      }
+      // No trail yet — lay a short one down from a point and ripple it.
+      var p = pick(points);
+      var horiz = Math.random() < 0.5;
+      var dir = Math.random() < 0.5 ? 1 : -1;
+      if (horiz) {
+        var from = Math.max(0, Math.min(COLS - 1, p.gx));
+        p.history.push({ axis: "h", index: p.gy, s0: from, s1: from + 1, move: p.moveCount, color: p.color, fadeT: 0, prog: 1, from: from, ripple: true, rippleT: 0, dir: dir });
+      } else {
+        var fromY = Math.max(0, Math.min(ROWS - 1, p.gy));
+        p.history.push({ axis: "v", index: p.gx, s0: fromY, s1: fromY + 1, move: p.moveCount, color: p.color, fadeT: 0, prog: 1, from: fromY, ripple: true, rippleT: 0, dir: dir });
+      }
+    }
+  };
+})();
+
+function conductorSpeedLabel(v) { return String(Math.round(v * 100) / 100) + "x"; }
 function renderConductor() {
   var el = document.getElementById("view-conductor");
-  var parts = bodyPartItems();
+  var st = conductorAnim.state;
   /* The visualizer IS the page: full bleed edge to edge, no box, no
-     direction text. Play/pause sits centered at the bottom and the
-     edit icon bottom-right; every control lives in a sheet that
-     opens above the pause button, dismissed by tapping outside it. */
-  var h = '<div class="conductor-wrap"><canvas id="conductor-canvas" aria-label="Chaos double pendulums — follow the big yellow bob"></canvas>';
+     direction text. Play/pause sits centered at the bottom, the
+     animation switcher on its left and the edit icon bottom-right;
+     every other control lives in a sheet that opens above the
+     pause button, dismissed by tapping outside it. */
+  var canvasLabel = conductor.mode === "pendulum"
+    ? "A double pendulum swinging on a grid, its fulcrum roaming the points — follow the red bob as it swings"
+    : "Four points moving on a grid, lighting colored trails behind them — follow the points as they move";
+  var h = '<div class="conductor-wrap"><canvas id="conductor-canvas" aria-label="' + canvasLabel + '"></canvas>';
   if (conductor.editOpen) {
     /* Tapping anywhere outside the panel closes it; every control
        applies its change as it's moved, so closing IS applying. */
     h += '<button type="button" class="conductor-backdrop" id="c-backdrop" aria-label="Close the conductor controls"></button>';
   }
+  h += '<div class="conductor-switch" role="group" aria-label="Animation">';
+  h += '<button type="button" id="c-mode-grid" aria-pressed="' + (conductor.mode === "grid" ? "true" : "false") + '"' + (conductor.mode === "grid" ? ' class="active"' : "") + ">Four points</button>";
+  h += '<button type="button" id="c-mode-pend" aria-pressed="' + (conductor.mode === "pendulum" ? "true" : "false") + '"' + (conductor.mode === "pendulum" ? ' class="active"' : "") + ">Pendulum</button>";
+  h += "</div>";
   h += '<button type="button" class="conductor-play" id="c-playpause-main" aria-label="' + (conductor.playing ? "Pause the conductor" : "Play the conductor") + '">' + (conductor.playing ? icon("pause", 24) : icon("play", 24)) + "</button>";
   h += '<button type="button" class="conductor-edit" id="c-edit" aria-expanded="' + (conductor.editOpen ? "true" : "false") + '" aria-label="' + (conductor.editOpen ? "Hide the conductor controls" : "Edit the conductor — show its controls") + '">' + (conductor.editOpen ? icon("x", 20) : icon("pencil", 20)) + "</button>";
   if (conductor.editOpen) {
     h += '<section class="conductor-panel" aria-label="Conductor controls">';
-    h += '<div class="row" role="group" aria-label="Pivot movement" style="gap:6px;"><span class="ctl-label">Pivot</span>';
-    ["grid", "circle", "3d"].forEach(function (m) {
-      var label = m === "3d" ? "3D" : m.charAt(0).toUpperCase() + m.slice(1);
-      h += '<button type="button" class="seg fd" data-pivot="' + m + '" aria-pressed="' + (conductor.pivotMode === m ? "true" : "false") + '" style="padding:6px 12px;font-size:12px;">' + label + "</button>";
-    });
-    h += "</div>";
-    h += '<div class="row mt2"><label class="ctl-label" for="c-speed">Speed</label><input type="range" id="c-speed" min="0.1" max="1.5" step="0.1" value="' + conductor.speed + '" /><span class="ctl-val" id="c-speed-val">' + conductor.speed.toFixed(1) + "x</span></div>";
-    h += '<div class="row mt1"><label class="ctl-label" for="c-chaos">Chaos</label><input type="range" id="c-chaos" min="1" max="10" step="1" value="' + conductor.chaos + '" /><span class="ctl-val" id="c-chaos-val">' + conductor.chaos + "</span></div>";
-    h += '<div class="row mt1"><label class="ctl-label" for="c-count">Pendulums</label><input type="range" id="c-count" min="1" max="20" step="1" value="' + conductor.count + '" /><span class="ctl-val" id="c-count-val">' + conductor.count + "</span></div>";
-    h += '<div class="row mt1"><label class="ctl-label" for="c-trail">Trail</label><input type="range" id="c-trail" min="10" max="140" step="10" value="' + conductor.trail + '" /><span class="ctl-val" id="c-trail-val">' + conductor.trail + "</span></div>";
-    h += '<div class="row mt2"><label class="ctl-label" for="c-follow">Follow with</label>';
-    h += '<select class="field grow" id="c-follow"><option value="">Just the bob</option>';
-    parts.forEach(function (pt) {
-      h += '<option value="' + esc(pt) + '"' + (conductor.follow === pt ? " selected" : "") + ">" + esc(pt) + "</option>";
-    });
-    h += "</select></div>";
+    h += '<div class="row"><label class="ctl-label" for="c-speed">Speed</label><input type="range" id="c-speed" min="0.25" max="2" step="0.05" value="' + st.speed + '" /><span class="ctl-val" id="c-speed-val">' + conductorSpeedLabel(st.speed) + "</span></div>";
+    if (conductor.mode === "grid") {
+      h += '<div class="row mt2"><label class="ctl-label" for="c-ripple">Ripples</label><input type="range" id="c-ripple" min="0" max="1" step="0.05" value="' + st.rippleChance + '" /><span class="ctl-val" id="c-ripple-val">' + Math.round(st.rippleChance * 100) + "%</span></div>";
+    }
+    h += '<div class="row mt2"><label class="ctl-label" for="c-rest">Rest</label><input type="range" id="c-rest" min="0" max="2" step="0.1" value="' + st.restBase + '" /><span class="ctl-val" id="c-rest-val">' + st.restBase.toFixed(1) + "s</span></div>";
+    if (conductor.mode === "pendulum") {
+      h += '<div class="row mt2"><label class="ctl-label" for="c-fulcrum">Fulcrum</label><input type="range" id="c-fulcrum" min="0.8" max="8" step="0.1" value="' + st.fulcrumInterval + '" /><span class="ctl-val" id="c-fulcrum-val">' + st.fulcrumInterval.toFixed(1) + "s</span></div>";
+    }
+    h += '<div class="row mt2"><span class="ctl-label">Stage</span>';
+    if (conductor.mode === "grid") {
+      h += '<button type="button" class="btn" id="c-ripple-now">Ripple now</button>';
+    }
+    h += '<button type="button" class="btn" id="c-reset">Reset</button></div>';
     h += "</section>";
   }
   h += "</div>";
@@ -4310,74 +5140,52 @@ function renderConductor() {
     renderConductor();
     conductorStart();
   });
+  document.getElementById("c-mode-grid").addEventListener("click", function () {
+    if (conductor.mode === "grid") return;
+    conductor.mode = "grid";
+    conductorAnim.setMode("grid");
+    renderConductor();
+    conductorStart();
+  });
+  document.getElementById("c-mode-pend").addEventListener("click", function () {
+    if (conductor.mode === "pendulum") return;
+    conductor.mode = "pendulum";
+    conductorAnim.setMode("pendulum");
+    renderConductor();
+    conductorStart();
+  });
   if (!conductor.editOpen) return;
   document.getElementById("c-backdrop").addEventListener("click", function () {
     conductor.editOpen = false;
     renderConductor();
     conductorStart();
   });
-  el.querySelectorAll("[data-pivot]").forEach(function (b) {
-    b.addEventListener("click", function () {
-      conductor.pivotMode = b.getAttribute("data-pivot");
-      conductor.walk = null;
-      conductor.pendulums.forEach(function (pt) { pt.trail = []; });
-      renderConductor();
-      conductorStart();
-    });
-  });
   document.getElementById("c-speed").addEventListener("input", function (e) {
-    conductor.speed = Number(e.target.value);
-    document.getElementById("c-speed-val").textContent = conductor.speed.toFixed(1) + "x";
+    conductorAnim.setSpeed(Number(e.target.value));
+    document.getElementById("c-speed-val").textContent = conductorSpeedLabel(conductorAnim.state.speed);
   });
-  document.getElementById("c-chaos").addEventListener("input", function (e) {
-    conductor.chaos = Number(e.target.value);
-    document.getElementById("c-chaos-val").textContent = conductor.chaos;
-    conductorReset();
+  document.getElementById("c-rest").addEventListener("input", function (e) {
+    conductorAnim.setRest(Number(e.target.value));
+    document.getElementById("c-rest-val").textContent = conductorAnim.state.restBase.toFixed(1) + "s";
   });
-  document.getElementById("c-count").addEventListener("input", function (e) {
-    conductor.count = Number(e.target.value);
-    document.getElementById("c-count-val").textContent = conductor.count;
-    conductorReset();
-  });
-  document.getElementById("c-trail").addEventListener("input", function (e) {
-    conductor.trail = Number(e.target.value);
-    document.getElementById("c-trail-val").textContent = conductor.trail;
-  });
-  document.getElementById("c-follow").addEventListener("change", function (e) {
-    conductor.follow = e.target.value;
-    renderConductor();
-    conductorStart();
-  });
-}
-function gridPoints(w, hgt) {
-  /* The grid covers the screen: 4 nodes across, 8 down, spread over
-     nearly the full width and the full height of the full-bleed
-     canvas — from near the top edge down to just above the
-     play/pause button. */
-  var cols = 4, rows = 8;
-  var gw = w * 0.94;
-  var gTop = hgt * 0.03;
-  var gBottom = Math.max(gTop + 120, hgt - 172);
-  var pts = [];
-  for (var r = 0; r < rows; r++) {
-    for (var c = 0; c < cols; c++) {
-      pts.push({
-        x: w / 2 - gw / 2 + (gw * c) / (cols - 1),
-        y: gTop + ((gBottom - gTop) * r) / (rows - 1)
-      });
-    }
+  if (conductor.mode === "grid") {
+    document.getElementById("c-ripple").addEventListener("input", function (e) {
+      conductorAnim.setRipple(Number(e.target.value));
+      document.getElementById("c-ripple-val").textContent = Math.round(conductorAnim.state.rippleChance * 100) + "%";
+    });
+    document.getElementById("c-ripple-now").addEventListener("click", function () {
+      conductorAnim.rippleNow();
+    });
   }
-  return { pts: pts, cols: cols, rows: rows, gw: gw, gTop: gTop, gBottom: gBottom };
-}
-function neighborOf(idx, cols, rows) {
-  /* Any node next to the current one — left, right, above or below,
-     chosen at random. Never a fixed row order, never a teleport. */
-  var r = Math.floor(idx / cols), c = idx % cols, options = [];
-  if (c > 0) options.push(idx - 1);
-  if (c < cols - 1) options.push(idx + 1);
-  if (r > 0) options.push(idx - cols);
-  if (r < rows - 1) options.push(idx + cols);
-  return options[Math.floor(Math.random() * options.length)];
+  if (conductor.mode === "pendulum") {
+    document.getElementById("c-fulcrum").addEventListener("input", function (e) {
+      conductorAnim.setFulcrum(Number(e.target.value));
+      document.getElementById("c-fulcrum-val").textContent = conductorAnim.state.fulcrumInterval.toFixed(1) + "s";
+    });
+  }
+  document.getElementById("c-reset").addEventListener("click", function () {
+    conductorReset();
+  });
 }
 function conductorFrame(ts) {
   conductor.raf = null;
@@ -4392,139 +5200,13 @@ function conductorFrame(ts) {
   var ctx = canvas.getContext("2d");
   if (!ctx) return;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  var dtMs = conductor.lastTs ? Math.min(64, ts - conductor.lastTs) : 16;
+  var dtMs = conductor.lastTs ? Math.min(50, ts - conductor.lastTs) : 16;
   conductor.lastTs = ts;
 
-  if (conductor.playing) {
-    conductor.t += dtMs / 1000;
-    /* The pivot travels on the same clock as the pendulums, so
-       pause and speed govern it too. */
-    conductor.pivotT += (dtMs / 1000) * conductor.speed;
-    var total = (1 / 60) * conductor.speed;
-    var steps = 8;
-    conductor.pendulums.forEach(function (p) {
-      for (var k = 0; k < steps; k++) pendulumStep(p, total / steps);
-    });
-  }
-  var cx = w / 2, cy = hgt * 0.46;
-  var px = cx, py = cy, phi = 0;
-
-  ctx.fillStyle = "#0d0b10";
-  ctx.fillRect(0, 0, w, hgt);
-
-  if (conductor.pivotMode === "grid") {
-    var g = gridPoints(w, hgt);
-    ctx.strokeStyle = "rgba(164,156,174,0.22)";
-    ctx.lineWidth = 1;
-    for (var gc = 0; gc < g.cols; gc++) {
-      var gx = w / 2 - g.gw / 2 + (g.gw * gc) / (g.cols - 1);
-      ctx.beginPath(); ctx.moveTo(gx, g.gTop); ctx.lineTo(gx, g.gBottom); ctx.stroke();
-    }
-    for (var gr = 0; gr < g.rows; gr++) {
-      var gy = g.gTop + ((g.gBottom - g.gTop) * gr) / (g.rows - 1);
-      ctx.beginPath(); ctx.moveTo(w / 2 - g.gw / 2, gy); ctx.lineTo(w / 2 + g.gw / 2, gy); ctx.stroke();
-    }
-    ctx.fillStyle = "rgba(164,156,174,0.45)";
-    g.pts.forEach(function (gp) {
-      ctx.beginPath(); ctx.arc(gp.x, gp.y, 2.5, 0, Math.PI * 2); ctx.fill();
-    });
-    /* The pivot random-walks the grid: each hop goes to any adjacent
-       node, eased over 1.6 sim-seconds. It launches from the middle
-       node of the grid, not the top-left corner. */
-    var hop = 1.6;
-    var walk = conductor.walk;
-    if (!walk || conductor.pivotT < walk.t0) {
-      var startNode = Math.round((g.rows - 1) / 2) * g.cols + Math.round((g.cols - 1) / 2);
-      walk = { from: startNode, to: neighborOf(startNode, g.cols, g.rows), t0: conductor.pivotT };
-      conductor.walk = walk;
-    }
-    while (conductor.pivotT - walk.t0 >= hop) {
-      walk.from = walk.to;
-      walk.to = neighborOf(walk.to, g.cols, g.rows);
-      walk.t0 += hop;
-    }
-    var fracRaw = Math.min(1, Math.max(0, (conductor.pivotT - walk.t0) / hop));
-    var frac = fracRaw * fracRaw * (3 - 2 * fracRaw);
-    var p0 = g.pts[walk.from], p1 = g.pts[walk.to];
-    if (p0 && p1) {
-      px = p0.x + (p1.x - p0.x) * frac;
-      py = p0.y + (p1.y - p0.y) * frac;
-    }
-  } else if (conductor.pivotMode === "circle") {
-    var R = Math.min(w, hgt) * 0.17;
-    var ang = conductor.pivotT * ((Math.PI * 2) / 9); /* one lap per 9 sim-seconds */
-    ctx.beginPath();
-    ctx.arc(cx, cy, R, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(164,156,174,0.22)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    px = cx + R * Math.cos(ang);
-    py = cy + R * Math.sin(ang);
-  } else {
-    phi = conductor.pivotT * 0.35;
-    px = cx + w * 0.17 * Math.sin(conductor.pivotT * 0.26);
-    py = cy + hgt * 0.13 * Math.sin(conductor.pivotT * 0.34 + 1.2);
-  }
-
-  var L = Math.min(w, hgt) * 0.17;
-  function project(x, y) {
-    if (conductor.pivotMode !== "3d") return { x: px + x, y: py + y, s: 1 };
-    var c = Math.cos(phi), sn = Math.sin(phi);
-    return { x: px + x * c, y: py + y - x * sn * 0.38, s: 1 - 0.28 * sn * (x / (L * 2)) };
-  }
-  var trailMax = conductor.trail * 6;
-  conductor.pendulums.forEach(function (p, i) {
-    var x1 = L * Math.sin(p.a1), y1 = L * Math.cos(p.a1);
-    var x2 = x1 + L * Math.sin(p.a2), y2 = y1 + L * Math.cos(p.a2);
-    var b1 = project(x1, y1), b2 = project(x2, y2);
-    if (conductor.playing) {
-      p.trail.push({ x: b2.x, y: b2.y });
-      while (p.trail.length > trailMax) p.trail.shift();
-    }
-    var lead = i === 0;
-    var pts = p.trail;
-    if (pts.length > 1) {
-      if (lead) {
-        /* The lead's trail slowly cycles through colors: short
-           chunks, each a step further along the wheel plus a slow
-           drift on the clock — a full turn takes about 70 seconds,
-           so the ribbon is always gradually becoming another color. */
-        var chunk = 10;
-        for (var s = 0; s < pts.length - 1; s += chunk) {
-          var end = Math.min(pts.length - 1, s + chunk);
-          ctx.beginPath();
-          for (var j = s; j <= end; j++) {
-            if (j === s) ctx.moveTo(pts[j].x, pts[j].y);
-            else ctx.lineTo(pts[j].x, pts[j].y);
-          }
-          var hue = Math.round((conductor.t * 5 + (s / Math.max(1, pts.length)) * 140) % 360);
-          ctx.strokeStyle = "hsla(" + hue + ", 90%, 65%, 0.85)";
-          ctx.lineWidth = 2.5;
-          ctx.stroke();
-        }
-      } else {
-        ctx.beginPath();
-        pts.forEach(function (q, j) { if (j === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y); });
-        ctx.strokeStyle = "hsla(" + p.hue + ", 90%, 65%, 0.5)";
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-      }
-    }
-    if (lead) {
-      /* The lead is the one to follow: full arms and a big volt bob. */
-      ctx.beginPath();
-      ctx.moveTo(px, py); ctx.lineTo(b1.x, b1.y); ctx.lineTo(b2.x, b2.y);
-      ctx.strokeStyle = "rgba(245,239,232,0.7)";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.beginPath(); ctx.arc(b1.x, b1.y, 4 * b1.s, 0, Math.PI * 2); ctx.fillStyle = "#f5efe8"; ctx.fill();
-      ctx.beginPath(); ctx.arc(b2.x, b2.y, 9 * b2.s, 0, Math.PI * 2); ctx.fillStyle = "#ffd23f"; ctx.fill();
-      ctx.lineWidth = 2; ctx.strokeStyle = "#0d0b10"; ctx.stroke();
-    } else {
-      ctx.beginPath(); ctx.arc(b2.x, b2.y, 3.5 * b2.s, 0, Math.PI * 2); ctx.fillStyle = "hsla(" + p.hue + ", 90%, 65%, 0.9)"; ctx.fill();
-    }
-  });
-  ctx.beginPath(); ctx.arc(px, py, 3, 0, Math.PI * 2); ctx.fillStyle = "#a49cae"; ctx.fill();
+  /* One clock, scaled by the speed control; pause freezes it, so
+     whichever study is showing holds perfectly still. */
+  if (conductor.playing) conductorAnim.step((dtMs / 1000) * conductorAnim.state.speed);
+  conductorAnim.draw(ctx, w, hgt);
   conductorStart();
 }
 function conductorStart() {
