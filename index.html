@@ -628,6 +628,46 @@
          chip carrying a whole note's text). */
       .tagchip { max-width: 100%; }
       .tagchip .tag-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+
+      /* ================= batch .19: session top bar + no-scroll fit ================= */
+      /* The running session NEVER scrolls: the overlay is locked
+         (the generic .overlay scrolls; this one must not), its
+         inner column is exactly the overlay's height, and the
+         center stage clips inside its own flex box. Each lab is
+         sized to fit that box instead — see the per-lab fit
+         variables renderSession sets on .session-inner. */
+      #session { overflow: hidden; overscroll-behavior: contain; }
+      .session-inner { height: 100%; min-height: 0; padding-bottom: 14px; }
+      .session-center { min-height: 0; overflow: hidden; padding: 10px 0 0; }
+      /* Top bar: Finish on the left, the This lab / Session
+         elapsed times centered, the close button on the right —
+         one grid row, every cell centered on the same line, and
+         Finish and close share one 40px height so they align
+         with each other and with the elapsed text between them. */
+      .session-topbar { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; min-height: 40px; flex: none; }
+      .session-topbar .session-elapsed { margin: 0; text-align: center; line-height: 1.3; }
+      #session #s-finish { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 40px; padding: 0 14px; justify-self: start; }
+      .session-topbar #s-close { justify-self: end; }
+      /* Per-lab fit: the stacked modes (Layered / Rounds) render
+         every item at once, so renderSession sets --sess-item,
+         --sess-clock and --sess-gap on .session-inner from the
+         lab's item count — more items, smaller type and tighter
+         gaps — and the stage fits without scrolling. Single-item
+         modes (In turn, breaks) set nothing and get the defaults.
+         Long single items still shrink further via their inline
+         size from sessionItemAttrs, which beats these. */
+      .session-item { font-size: var(--sess-item, 44px); }
+      .session-clock { font-size: var(--sess-clock, 60px); }
+      .session-items { display: grid; gap: var(--sess-gap, 12px); }
+      .session-center .transport-row { margin-top: 20px; }
+      /* Short screens squeeze the fixed pieces a touch more. */
+      @media (max-height: 660px) {
+        .session-clock { font-size: min(var(--sess-clock, 60px), 48px); }
+        .session-item { font-size: min(var(--sess-item, 44px), 38px); }
+        .session-center .transport-row { margin-top: 14px; }
+        .session-bar { margin-top: 10px; }
+        .session-center { padding-top: 6px; }
+      }
     </style>
   </head>
   <body>
@@ -800,7 +840,7 @@ var FALLBACK_BAKED = {
    as empty space under the tab bar, for one) and init() reloads once
    to pick up the fresh document. The Style guide shows this stamp so
    a stale copy can be spotted at a glance. */
-var BUILD_ID = "2026-11-11.17";
+var BUILD_ID = "2026-11-11.19";
 
 /* ------------------------------ storage ------------------------------ */
 function storeGet(key, fallback) {
@@ -2935,10 +2975,11 @@ function transportHTML() {
   if (count > 1) h += '<p class="lab-of">Lab ' + (idx + 1) + " of " + count + "</p>";
   return h;
 }
-/* Actual time so far, under the transport in every mode: this
-   lab's clock and the session's. These are the numbers the end-of-
-   session log is built from — repeats included, because they count
-   the wall-clock time the lab actually ran. */
+/* Actual time so far, centered in the session's top bar between
+   Finish and the close button in every mode: this lab's clock and
+   the session's. These are the numbers the end-of-session log is
+   built from — repeats included, because they count the
+   wall-clock time the lab actually ran. */
 function elapsedHTML() {
   var labSecs = session.labElapsed[session.labIndex] || 0;
   return '<p class="session-elapsed" style="text-align:center;">This lab <span class="volt" id="s-elapsed-lab">' + esc(fmtClock(labSecs)) + '</span> · Session <span class="volt" id="s-elapsed-total">' + esc(fmtClock(session.totalElapsed)) + "</span></p>";
@@ -2948,7 +2989,7 @@ function elapsedHTML() {
    getting its log — is an explicit tap, never a countdown. */
 function finishBtnHTML() {
   if (session.done) return '<span aria-hidden="true"></span>';
-  return '<button type="button" class="btn" id="s-finish" aria-label="Finish the session and see its log" style="background:var(--surface);color:var(--volt);border-color:rgba(255,210,63,0.55);padding:8px 14px;font-size:13px;">' + icon("check", 16) + " Finish</button>";
+  return '<button type="button" class="btn" id="s-finish" aria-label="Finish the session and see its log" style="background:var(--surface);color:var(--volt);border-color:rgba(255,210,63,0.55);font-size:13px;">' + icon("check", 16) + " Finish</button>";
 }
 function renderSession() {
   var el = document.getElementById("session");
@@ -2962,13 +3003,29 @@ function renderSession() {
   var progress = Math.min(100, Math.max(0, ((seg - session.remaining) / seg) * 100));
   var mode = session.curMode();
   var run = session.curRun();
-  var h = '<div class="session-inner">';
-  h += '<div class="row" style="justify-content:space-between;align-items:flex-start;">';
-  /* No lab name anywhere in a running session — every mode shows
-     just its slots. Finish keeps the left corner while it plays;
-     the close button keeps the right. */
+  /* Per-lab fit: the stacked modes show every item at once, so
+     their item size, clock and gaps shrink as the item count
+     grows — the whole lab fits the fixed session screen, which
+     never scrolls (see the batch .19 CSS). */
+  var fitVars = "";
+  if (!session.done && (mode === "together" || mode === "rounds")) {
+    var fitN = Math.max(1, count);
+    var itemPx = fitN <= 2 ? 44 : fitN === 3 ? 36 : fitN === 4 ? 30 : 26;
+    var clockPx = fitN <= 2 ? 60 : fitN === 3 ? 52 : 46;
+    var gapPx = fitN <= 2 ? 12 : fitN === 3 ? 10 : 8;
+    fitVars = ' style="--sess-item:' + itemPx + "px;--sess-clock:" + clockPx + "px;--sess-gap:" + gapPx + 'px;"';
+  }
+  var h = '<div class="session-inner' + (session.done ? " done" : "") + '"' + fitVars + ">";
+  /* Top bar: Finish left, the This lab / Session elapsed times
+     centered, close right — one row, all three aligned. No lab
+     name anywhere in a running session — every mode shows just
+     its slots. On the Done screen the elapsed line is gone (the
+     log below carries the totals), leaving an empty center cell
+     so the close button keeps its corner. */
+  h += '<div class="session-topbar">';
   h += finishBtnHTML();
-  h += '<button type="button" class="iconbtn" id="s-close" aria-label="Close practice" style="background:var(--surface);margin-top:4px;">' + icon("x", 20) + "</button></div>";
+  h += session.done ? '<span aria-hidden="true"></span>' : elapsedHTML();
+  h += '<button type="button" class="iconbtn" id="s-close" aria-label="Close practice" style="background:var(--surface);">' + icon("x", 20) + "</button></div>";
   h += '<div class="session-center">';
   if (session.done) {
     /* The session log: actual time per lab — every round and pass
@@ -3008,7 +3065,6 @@ function renderSession() {
     h += '<p class="fd break-big" id="s-break">Break — next round in ' + Math.ceil(session.remaining) + 's</p>';
     h += '<div class="bar session-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(progress) + '" aria-label="Time through this break"><i id="s-bar" style="width:' + progress + '%;background:var(--break);"></i></div>';
     h += transportHTML();
-    h += elapsedHTML();
     h += "</div>";
   } else if (mode === "rounds") {
     var totalStages = (run.roundSeconds || 60) / STAGE_SECONDS;
@@ -3018,7 +3074,7 @@ function renderSession() {
     h += '<canvas class="rounds-particles" id="rounds-canvas" aria-hidden="true"></canvas>';
     h += '<div class="rounds-content">';
     h += '<p class="kicker accent" style="font-size:13px;margin:0;">Round ' + session.roundNumber + ' <span class="dim">· ' + run.roundSeconds + "s rounds</span></p>";
-    h += '<div class="mt3" style="display:grid;gap:10px;">';
+    h += '<div class="session-items mt3">';
     items.forEach(function (it) {
       h += '<div><p class="kicker dim" style="margin:0;">' + esc(itemLabel(it)) + '</p><p class="fd session-item"' + sessionItemAttrs(it) + ">" + esc(it.item) + "</p></div>";
     });
@@ -3027,11 +3083,10 @@ function renderSession() {
     h += '<div class="bar session-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(progress) + '" aria-label="Time through this round"><i id="s-bar" style="width:' + progress + '%"></i></div>';
     h += '<div class="stage-dots mt3" id="s-dots" aria-hidden="true">' + dots + "</div>";
     h += transportHTML();
-    h += elapsedHTML();
     h += "</div>";
   } else if (mode === "together") {
     h += '<p class="kicker accent" style="font-size:13px;margin:0;">Layered <span class="dim">· ' + run.togetherMinutes + " min</span></p>";
-    h += '<div class="mt4" style="display:grid;gap:14px;">';
+    h += '<div class="session-items mt4">';
     items.forEach(function (it) {
       h += '<div><p class="kicker dim" style="margin:0;">' + esc(itemLabel(it)) + '</p><p class="fd session-item"' + sessionItemAttrs(it) + ">" + esc(it.item) + "</p></div>";
     });
@@ -3039,7 +3094,6 @@ function renderSession() {
     h += '<p class="fd session-clock mt4" id="s-clock" aria-label="' + esc(fmtClock(session.remaining)) + ' remaining">' + esc(fmtClock(session.remaining)) + "</p>";
     h += '<div class="bar session-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(progress) + '" aria-label="Time through this lab"><i id="s-bar" style="width:' + progress + '%"></i></div>';
     h += transportHTML();
-    h += elapsedHTML();
   } else if (cur) {
     h += '<p class="kicker accent" style="font-size:13px;margin:0;">In turn <span class="dim">· ' + run.inTurnSeconds + "s each</span>" + (session.loop && session.round > 1 ? ' <span class="dim">· Pass ' + session.round + "</span>" : "") + "</p>";
     h += '<p class="kicker dim" style="margin:12px 0 0;">' + esc(itemLabel(cur)) + "</p>";
@@ -3055,7 +3109,6 @@ function renderSession() {
     });
     h += "</div>";
     h += transportHTML();
-    h += elapsedHTML();
   }
   h += "</div></div>";
   el.innerHTML = h;
