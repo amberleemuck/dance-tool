@@ -1130,6 +1130,32 @@
       #labs-add-slot, #quick-add-slot { scroll-margin-top: 16px; }
       .btn > svg.ic { display: block; }
       #labs-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; padding-right: 12px; }
+
+      /* ================= batch .43: Labs pair stays in its card (2026-11-12) =================
+         The orange SEND TO TIMER button broke out of the builder
+         card's right edge on her phone. Diagnosis: the pair row is
+         Save (flex:1, the filler) beside Send to Timer (flex:0 0
+         auto, sized to its label). The batch .32 floor —
+         min-width: calc(50% - 4px) on BOTH pair members — left
+         the filler unable to give up space: at 393px the card's
+         inner row is ~343px, Send's icon + "SEND TO TIMER" label
+         needs ~183px, and Save's floored 166px + Send's 183px +
+         the 8px gap came to ~357px, so Send was pushed past the
+         card. The fix is scoped to this pair (.labs-pair, carried
+         by the live row and its Style guide specimens): neither
+         member carries the half-width floor, so Save takes
+         whatever is left after Send's full label — its own label
+         still fits that remainder with room to spare — and Send
+         keeps flex:0 0 auto, so its label is never shrunk,
+         wrapped or clipped. At phone widths the pair's padding
+         and icon gap tighten a touch (10px → 8px, 8px → 6px),
+         widening the margin further; the label, colour and the
+         pair's arrangement are unchanged. Other .btn-lg-pair rows
+         (bloom / preset / category pairs, all flex:1 + flex:1)
+         keep the batch .32 floor untouched. */
+      .labs-pair { min-width: 0; }
+      .labs-pair .btn-lg-pair { min-width: 0; }
+      @media (max-width: 480px) { .labs-pair .btn-lg-pair { padding-left: 8px; padding-right: 8px; gap: 6px; } }
     </style>
   </head>
   <body>
@@ -1309,7 +1335,7 @@ var FALLBACK_BAKED = {
    as empty space under the tab bar, for one) and init() reloads once
    to pick up the fresh document. The Style guide shows this stamp so
    a stale copy can be spotted at a glance. */
-var BUILD_ID = "2026-11-12.42";
+var BUILD_ID = "2026-11-12.43";
 
 /* ------------------------------ storage ------------------------------ */
 function storeGet(key, fallback) {
@@ -4352,7 +4378,7 @@ function renderLabsYourLab() {
      fills what's left. Editing adds Cancel on its own full-width
      row under the pair — all three large buttons in a single row
      squeezed together and overlapped on a phone. */
-  h += '<div class="mt2" style="display:flex;gap:8px;">';
+  h += '<div class="mt2 labs-pair" style="display:flex;gap:8px;">';
   h += '<button type="button" class="btn-lg btn-lg-volt btn-lg-pair" id="labs-save" style="flex:1;">' + icon("bookmark", 20) + (editing ? " Save" : " Save lab") + "</button>";
   if (inTimer) {
     h += '<span class="btn-lg btn-lg-pair" aria-disabled="true" style="flex:0 0 auto;color:var(--volt);border:1px solid var(--volt);">' + icon("check", 20) + " In the Timer</span>";
@@ -7335,8 +7361,8 @@ function renderStyleGuide() {
     '<button type="button" class="btn-lg btn-lg-ghost">' + icon("note", 20) + " View note</button>"));
   b += item("Large outline volt \u00b7 .btn-lg.btn-lg-outline-volt (Add lab, Timer footer)", rowOf(
     '<button type="button" class="btn-lg btn-lg-outline-volt">' + icon("plus", 20) + " Add lab</button>"));
-  b += item("Pair \u00b7 Save lab fills, Send to Timer fits (.btn-lg-pair)", '<div style="display:flex;gap:8px;"><button type="button" class="btn-lg btn-lg-volt btn-lg-pair" style="flex:1;">' + icon("bookmark", 20) + ' Save lab</button><button type="button" class="btn-lg btn-lg-primary btn-lg-pair" style="flex:0 0 auto;">' + icon("timer", 20) + " Send to Timer</button></div>");
-  b += item("Pair \u00b7 already queued state (span, not a button)", '<div style="display:flex;gap:8px;"><button type="button" class="btn-lg btn-lg-volt btn-lg-pair" style="flex:1;">' + icon("bookmark", 20) + ' Save lab</button><span class="btn-lg btn-lg-pair" aria-disabled="true" style="flex:0 0 auto;color:var(--volt);border:1px solid var(--volt);">' + icon("check", 20) + " In the Timer</span></div>");
+  b += item("Pair \u00b7 Save lab fills, Send to Timer fits (.labs-pair \u00b7 .btn-lg-pair)", '<div class="labs-pair" style="display:flex;gap:8px;"><button type="button" class="btn-lg btn-lg-volt btn-lg-pair" style="flex:1;">' + icon("bookmark", 20) + ' Save lab</button><button type="button" class="btn-lg btn-lg-primary btn-lg-pair" style="flex:0 0 auto;">' + icon("timer", 20) + " Send to Timer</button></div>", "no half-width floor on either member (batch .43), so Send keeps its full label and Save takes what is left \u2014 the pair always stays inside its card");
+  b += item("Pair \u00b7 already queued state (span, not a button)", '<div class="labs-pair" style="display:flex;gap:8px;"><button type="button" class="btn-lg btn-lg-volt btn-lg-pair" style="flex:1;">' + icon("bookmark", 20) + ' Save lab</button><span class="btn-lg btn-lg-pair" aria-disabled="true" style="flex:0 0 auto;color:var(--volt);border:1px solid var(--volt);">' + icon("check", 20) + " In the Timer</span></div>");
   b += item("Pair \u00b7 modal foot (Cancel / confirm, equal halves)", '<div style="display:flex;gap:8px;"><button type="button" class="btn-lg btn-lg-ghost" style="flex:1;">Cancel</button><button type="button" class="btn-lg btn-lg-primary" style="flex:1;">' + icon("plus", 20) + " Add to Today</button></div>");
   b += item("Full width \u00b7 Split confirm / cancel, Cancel edit", '<div style="display:grid;gap:8px;"><button type="button" class="btn-lg btn-lg-primary" style="width:100%;">Split into 3 notes</button><button type="button" class="btn-lg btn-lg-ghost" style="width:100%;">Cancel</button><button type="button" class="btn-lg btn-lg-ghost" style="width:100%;">Cancel edit</button></div>');
   b += item("Large button \u00b7 disabled state", rowOf('<button type="button" class="btn-lg btn-lg-primary" disabled>Start</button>'));
@@ -7608,6 +7634,7 @@ function renderStyleGuide() {
   b += line("The list button at the transport\u2019s far left opens a preview of the session\u2019s labs over the timer: every lab in order as a Today queue row, the one playing now outlined, nothing tappable. Opening it pauses the timer the same way the note composer does, and closing it resumes \u2014 only if the preview is what paused it. A plain timer has no labs, so it never gets the button.");
   b += line("In a running session, a Random slot's label carries a small shuffle button beside it: tapping re-rolls just that slot to a different item from its category — never the item already showing — while the clock keeps counting. The saved lab is untouched; the slot is still random next time it runs.");
   b += line("A modal belongs to the tab that opened it. Switching tabs tucks an open modal away with its own tab — backdrop and scroll lock too — and returning to that tab restores it exactly as it was left, instead of floating it over the new page.");
+  b += line("The Labs builder\u2019s Save / Send to Timer pair always stays inside its card: Send keeps the full width its label needs and Save takes whatever is left, rather than both buttons holding a half-width floor and pushing Send out of the card at phone width.");
   b += line("Nothing rests half-clipped at a scroller\u2019s top edge: the page views and the builder\u2019s scroller carry top scroll padding and the Add slot buttons carry the matching scroll margin, so a scroll that lands on the Add slot row parks it whole, + icon included. A long lab name truncates inside its field with an ellipsis and right padding instead of running off the edge mid-word.");
   b += line("This copy is build <strong>" + BUILD_ID + "</strong>. If a Home Screen copy shows an older build here, it\u2019s still running a cached page \u2014 the tool reloads itself once when it spots that, and fully closing and reopening the app clears the rest.");
   h += rule("Behavior", b);
