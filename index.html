@@ -24,6 +24,9 @@
         --surface-alt: #1f1929;
         --text: #f5efe8;
         --dim: #a49cae;
+        /* Input / field titles everywhere use this grey — a smidge
+           lighter than --dim (batch .20). */
+        --dim2: #bcb3c9;
         --border: #2c2635;
         --accent: #ff4d2e;
         --volt: #ffd23f;
@@ -141,15 +144,17 @@
       .conductor-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
       .conductor-controls { flex: none; padding: 10px 12px; }
       .conductor-controls input[type="range"] { flex: 1; min-width: 0; accent-color: var(--volt); }
-      .ctl-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--dim); width: 80px; flex: none; }
+      .ctl-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim2); width: 80px; flex: none; }
       .ctl-val { font-size: 12px; font-weight: 700; width: 40px; text-align: right; flex: none; font-variant-numeric: tabular-nums; }
 
       /* ---------- slot pickers ---------- */
       .slot { border: 1px solid var(--border); background: var(--bg); border-radius: 8px; padding: 8px; }
       .slot + .slot { margin-top: 8px; }
-      .slot-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim); }
+      .slot-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim2); }
       .slot-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
-      .slot-grid label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 2px; text-transform: none; letter-spacing: 0; color: var(--text); }
+      /* Dropdown titles carry the one field-title style (batch .20):
+         the category form's size and all caps, in the lighter grey. */
+      .slot-grid label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim2); }
       .lab-name-line { display: block; width: 100%; border: 1px solid var(--volt); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
       .rounds-center { position: relative; }
       .rounds-glow { position: absolute; left: 50%; top: 50%; border-radius: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle, rgba(255,210,63,0.85) 0%, rgba(255,77,46,0.45) 45%, transparent 70%); pointer-events: none; transition: width 0.9s ease, height 0.9s ease, opacity 0.9s ease; z-index: 0; }
@@ -237,7 +242,7 @@
       .moment-main .sub { font-size: 12px; opacity: 0.65; }
       .stage-field { width: 100%; border-radius: 8px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.1); color: #fff; padding: 10px 12px; font-size: 16px; }
       .stage-field::placeholder { color: rgba(255,255,255,0.5); }
-      .stage-field-label { display: block; font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+      .stage-field-label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim2); margin-bottom: 4px; }
 
       .note-pre { white-space: pre-wrap; overflow-wrap: break-word; font-size: 20px; line-height: normal; font-family: inherit; margin: 10px 0 0; }
       .row { display: flex; align-items: center; gap: 8px; }
@@ -353,21 +358,25 @@
 
       /* ================= batch 3 + 4 sync with the sidebar tool (2026-11-09) ================= */
       :root { --overlay: #2c2635; }
-      /* Pressed state: every button dips and brightens while pushed. */
+      /* Pressed state: a button brightens while pushed — its TEXT no
+         longer shrinks (batch .20). The shrink now belongs to the
+         whole clickable entity instead: tappable list items and
+         cards scale as one piece (see .lab-card / .note-card in the
+         batch .20 section). */
       button { -webkit-tap-highlight-color: transparent; }
-      button:not(:disabled) { transition: transform 90ms ease-out, filter 90ms ease-out; }
-      button:not(:disabled):active { transform: scale(0.95); filter: brightness(1.35); }
-      .stage-play:active { transform: translate(-50%, -50%) scale(0.95); }
-      .search-clear:active { transform: translateY(-50%) scale(0.95); }
+      button:not(:disabled) { transition: filter 90ms ease-out; }
+      button:not(:disabled):active { filter: brightness(1.35); }
+      .stage-play:active { transform: translate(-50%, -50%); }
+      .search-clear:active { transform: translateY(-50%); }
       @media (prefers-reduced-motion: reduce) {
         button:not(:disabled) { transition: none; }
         button:not(:disabled):active { transform: none; }
       }
       /* Icon buttons: one standard size — 40px circle, 20px Tabler icon;
          the small one is 32px / 16px for compact rows. */
-      .iconbtn { width: 40px; height: 40px; padding: 0 !important; }
+      .iconbtn { width: 40px; height: 40px; min-width: 40px; min-height: 40px; flex: none; align-self: center; aspect-ratio: 1 / 1; padding: 0 !important; }
       .iconbtn > svg.ic { width: 20px; height: 20px; }
-      .iconbtn.sm { width: 32px; height: 32px; }
+      .iconbtn.sm { width: 32px; height: 32px; min-width: 32px; min-height: 32px; }
       .iconbtn.sm > svg.ic { width: 16px; height: 16px; }
       /* Slot actions (shuffle / remove / new-category +) run smaller
          than the standard icon button: 32px circle, 16px icon. */
@@ -541,7 +550,7 @@
          off-center next to one-line "Save lab" — the pair now stays
          on one line, icon and label centered as a group). */
       .btn-lg { text-align: center; }
-      .btn-lg-pair { padding-left: 10px; padding-right: 10px; font-size: 13px; white-space: nowrap; min-width: 0; }
+      .btn-lg-pair { padding-left: 10px; padding-right: 10px; white-space: nowrap; min-width: 0; }
       .btn-lg-pair > svg.ic { flex: none; }
       .btn-lg-pair + .btn-lg-pair, .btn-lg-pair + .btn-lg, .btn-lg + .btn-lg-pair { min-width: 0; }
 
@@ -557,7 +566,10 @@
       #view-timer { display: block; overflow-y: auto; }
       #timer-footer { box-shadow: 0 -10px 28px rgba(0,0,0,0.5); }
       .today-add { margin-bottom: 8px; box-shadow: 0 6px 18px rgba(0,0,0,0.45); }
-      .run-badge { display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; border: 1px solid rgba(255,210,63,0.55); color: var(--volt); background: rgba(255,210,63,0.08); padding: 4px 10px; font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; }
+      /* A queued lab's run reads as plain orange text — no pill, no
+         border, no fill (batch .20). Still a button: tapping it
+         reopens that lab's run setup. */
+      .run-badge { display: inline-flex; align-items: center; gap: 5px; border: none; background: none; color: var(--accent); padding: 2px 0; font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; }
       .run-badge > svg.ic { flex: none; }
       .today-total { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; border-top: 1px solid var(--border); margin-top: 10px; padding-top: 10px; font-size: 13px; }
       .today-total .big { font-family: "Archivo", system-ui, sans-serif; font-size: 15px; font-weight: 900; }
@@ -607,12 +619,14 @@
          tag chip was enough) must clip inside its own row instead
          of shifting the whole page sideways. */
       .view { overflow-x: hidden; }
-      /* Timer footer: Add lab and Start sit side by side, one row,
-         equal halves — no summary line above them. */
+      /* Timer footer: Add lab and Start sit side by side, one row —
+         no summary line above them. Start is only as wide as its
+         text and icon need (batch .20); Add lab fills the rest of
+         the row. */
       #timer-footer .inner { display: flex; gap: 8px; align-items: stretch; }
       #timer-footer #open-builder { flex: 1 1 0; width: auto; min-width: 0; margin: 0; box-shadow: none; }
-      #timer-footer-inner { flex: 1 1 0; min-width: 0; display: flex; }
-      #timer-footer-inner .btn-lg { flex: 1; width: 100%; }
+      #timer-footer-inner { flex: 0 0 auto; display: flex; }
+      #timer-footer-inner .btn-lg { flex: none; width: auto; }
       /* Half-width buttons: labels stay on one line at phone width. */
       #timer-footer .btn-lg { white-space: nowrap; padding-left: 10px; padding-right: 10px; }
       /* Note card tags: ONE line at the bottom of the card,
@@ -639,14 +653,15 @@
       #session { overflow: hidden; overscroll-behavior: contain; }
       .session-inner { height: 100%; min-height: 0; padding-bottom: 14px; }
       .session-center { min-height: 0; overflow: hidden; padding: 10px 0 0; }
-      /* Top bar: Finish on the left, the This lab / Session
-         elapsed times centered, the close button on the right —
-         one grid row, every cell centered on the same line, and
-         Finish and close share one 40px height so they align
-         with each other and with the elapsed text between them. */
-      .session-topbar { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; min-height: 40px; flex: none; }
+      /* Top bar (batch .20): the This lab / Session elapsed times
+         centered, Finish in the top right — the × is gone (it did
+         the same thing as Finish). The Done screen keeps its close
+         button in the same right-hand cell. The grid is 1fr auto
+         1fr so the elapsed text stays truly centered whatever sits
+         at the right. */
+      .session-topbar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; min-height: 40px; flex: none; }
       .session-topbar .session-elapsed { margin: 0; text-align: center; line-height: 1.3; }
-      #session #s-finish { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 40px; padding: 0 14px; justify-self: start; }
+      #session #s-finish { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 40px; padding: 0 14px; justify-self: end; }
       .session-topbar #s-close { justify-self: end; }
       /* Per-lab fit: the stacked modes (Layered / Rounds) render
          every item at once, so renderSession sets --sess-item,
@@ -658,16 +673,72 @@
          size from sessionItemAttrs, which beats these. */
       .session-item { font-size: var(--sess-item, 44px); }
       .session-clock { font-size: var(--sess-clock, 60px); }
-      .session-items { display: grid; gap: var(--sess-gap, 12px); }
+      /* Slots spread evenly through the space between the top bar
+         and the pinned transport (batch .20): the items block
+         takes all the leftover height and spaces its blocks out
+         evenly, so 2-item and 4-item labs fill the same stage the
+         same way. Each block is its category label + item text,
+         kept tight together. */
+      .session-items { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: space-evenly; gap: var(--sess-gap, 12px); }
       .session-center .transport-row { margin-top: 20px; }
       /* Short screens squeeze the fixed pieces a touch more. */
       @media (max-height: 660px) {
         .session-clock { font-size: min(var(--sess-clock, 60px), 48px); }
         .session-item { font-size: min(var(--sess-item, 44px), 38px); }
-        .session-center .transport-row { margin-top: 14px; }
         .session-bar { margin-top: 10px; }
         .session-center { padding-top: 6px; }
       }
+
+      /* ================= batch .20: feedback pass (2026-11-12) ================= */
+      /* One field-title style for standalone labels — the same size,
+         all caps and lighter grey (.slot-grid label, .slot-head,
+         .ctl-label and .stage-field-label carry the same values in
+         their own rules above). */
+      .flabel { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim2); }
+      /* Lab list: a long title can never smush the card's top-right
+         action — the title takes the room that's left and the
+         button keeps its full 40px. */
+      .lab-card > .row > h3 { flex: 1 1 auto; min-width: 0; }
+      .lab-card > .row > .iconbtn { flex: none; }
+      /* Whole-entity press (see the button rule above): tappable
+         cards shrink as one piece while pressed, text included in
+         the card — buttons themselves only brighten now. Lab cards
+         are tappable (the card opens its editor), so they carry a
+         pointer; note cards press the same way. */
+      .lab-card, .note-card { transition: transform 90ms ease-out; }
+      .lab-card:active, .note-card:active { transform: scale(0.98); }
+      .lab-card { cursor: pointer; }
+      @media (prefers-reduced-motion: reduce) {
+        .lab-card, .note-card { transition: none; }
+        .lab-card:active, .note-card:active { transform: none; }
+      }
+      /* Session transport is PINNED: prev / pause / next and the
+         Lab N of M line live in their own block at the bottom of
+         the session, right above the tab bar, at the same position
+         in every mode and for every lab — the stage above flexes,
+         the transport never moves. */
+      .session-transport { flex: none; padding-top: 12px; }
+      .session-transport .transport-row { margin-top: 0; }
+      .session-transport .lab-of { margin-bottom: 0; }
+      .session-center { justify-content: flex-start; }
+      /* Rounds: the content column fills the stage so its items
+         block can spread; a break just centers its countdown. */
+      .rounds-content { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
+      .rounds-content.spread { justify-content: flex-start; }
+      /* In turn's single slot block fills the stage and centers. */
+      .session-slotblock { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
+      /* Category sits close above its item text: the item <p> loses
+         its UA paragraph margin and the label's leading tightens —
+         label + item read as one block. */
+      .session-item { margin: 2px 0 0; }
+      .session-clock { margin-bottom: 0; }
+      .session-items .kicker, .session-slotblock .kicker { line-height: 1.15; }
+      /* Notes list: the results scroll runs the FULL height of the
+         view — the view's own bottom padding no longer stops it
+         short inside its container, so nothing clips or overlaps
+         the last stretch of the list. */
+      #view-notes.notes-list-mode { padding-bottom: 0; }
+      .notes-results-scroll { padding-bottom: 6px; }
     </style>
   </head>
   <body>
@@ -840,7 +911,7 @@ var FALLBACK_BAKED = {
    as empty space under the tab bar, for one) and init() reloads once
    to pick up the fresh document. The Style guide shows this stamp so
    a stale copy can be spotted at a glance. */
-var BUILD_ID = "2026-11-11.19";
+var BUILD_ID = "2026-11-12.21";
 
 /* ------------------------------ storage ------------------------------ */
 function storeGet(key, fallback) {
@@ -1379,7 +1450,11 @@ function deleteLocalLab(id) {
   storeSet(LS_LABS, state.localLabs);
 }
 function hideBakedLab(lab) {
-  var sig = labSignature({ name: lab.name || "", pairs: pairsForLab(lab) });
+  /* The signature MUST be the one allLabs() checks — computed from
+     the lab itself. (Building it from pairsForLab instead broke
+     note labs: their signature is "note:<key>", never a pairs
+     string, so the sample note lab could never be deleted.) */
+  var sig = labSignature(lab);
   if (state.hiddenBaked.indexOf(sig) === -1) {
     state.hiddenBaked.push(sig);
     storeSet(LS_HIDDEN, state.hiddenBaked);
@@ -1783,9 +1858,9 @@ function takenByOtherSlot(picker, slot) {
 var ADD_CATEGORY_VALUE = "__add_category__";
 function newCategoryFormHTML(id, slot) {
   var h = '<div style="margin-top:8px;">';
-  h += '<label class="kicker dim" for="' + id + "-" + slot.uid + '-newcat" style="display:block;">Category name</label>';
+  h += '<label class="flabel" for="' + id + "-" + slot.uid + '-newcat">Category name</label>';
   h += '<input class="field mt1" id="' + id + "-" + slot.uid + '-newcat" data-field="new-category" placeholder="New category name" autocomplete="off" maxlength="40" />';
-  h += '<div style="margin-top:8px;"><label class="kicker dim" for="' + id + "-" + slot.uid + '-newcat-item" style="display:block;">Items <span style="text-transform:none;letter-spacing:0;font-weight:400;">(optional — add more later)</span></label></div>';
+  h += '<div style="margin-top:8px;"><label class="flabel" for="' + id + "-" + slot.uid + '-newcat-item">Items <span style="text-transform:none;letter-spacing:0;font-weight:400;">(optional — add more later)</span></label></div>';
   h += '<div class="row mt1"><input class="field grow" id="' + id + "-" + slot.uid + '-newcat-item" data-field="new-category-item" placeholder="An item for this category…" autocomplete="off" maxlength="80" />';
   h += '<button type="button" class="btn btn-volt" data-act="add-cat-item" style="padding:8px 14px;font-size:12px;flex:none;">Add</button></div>';
   h += '<div class="row wrap mt1" data-cat-items></div>';
@@ -2074,6 +2149,10 @@ function renderToday() {
     h += '<span class="grow" style="min-width:0;"><span class="fd" style="display:block;font-size:13px;font-weight:700;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(drillTitle(d)) + '</span>' +
       '<span class="dim small" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(pairs.map(function (p) { return p.item ? String(p.item).replace(/\s+/g, " ") : "Random " + p.category; }).join(" · ")) + '</span>' +
       '<span style="display:block;margin-top:4px;"><button type="button" class="run-badge" data-run="' + d.id + '" aria-label="How ' + esc(drillTitle(d)) + ' runs: ' + esc(runSummary(run)) + ' — tap to change">' + icon("timer", 14) + " " + esc(runSummary(run)) + "</button></span></span>";
+    /* Reorder arrows sit with the row's other controls: up / down
+       swap the lab with its neighbour in the queue. */
+    h += '<button type="button" class="stepper" data-move="-1" data-id="' + d.id + '" aria-label="Move ' + esc(drillTitle(d)) + ' up in today\'s session"' + (i === 0 ? " disabled" : "") + ">" + icon("chevU", 16) + "</button>";
+    h += '<button type="button" class="stepper" data-move="1" data-id="' + d.id + '" aria-label="Move ' + esc(drillTitle(d)) + ' down in today\'s session"' + (i === count - 1 ? " disabled" : "") + ">" + icon("chevD", 16) + "</button>";
     h += '<button type="button" class="stepper" data-edit="' + d.id + '" aria-label="Edit ' + esc(drillTitle(d)) + ' — its items and how it runs">' + icon("pencil", 16) + "</button>";
     h += '<button type="button" class="stepper" data-del="' + d.id + '" aria-label="Remove ' + esc(drillTitle(d)) + ' from today\'s session">' + icon("x", 16) + "</button>";
     h += "</div>";
@@ -2093,6 +2172,20 @@ function renderToday() {
     b.addEventListener("click", function () {
       var id = b.getAttribute("data-del");
       state.drills = state.drills.filter(function (d) { return d.id !== id; });
+      queue.onDrillsChanged();
+    });
+  });
+  list.querySelectorAll("[data-move]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var id = b.getAttribute("data-id");
+      var dir = Number(b.getAttribute("data-move"));
+      var at = -1;
+      state.drills.forEach(function (d, i) { if (d.id === id) at = i; });
+      var to = at + dir;
+      if (at < 0 || to < 0 || to >= state.drills.length) return;
+      var swap = state.drills[at];
+      state.drills[at] = state.drills[to];
+      state.drills[to] = swap;
       queue.onDrillsChanged();
     });
   });
@@ -2525,7 +2618,7 @@ function renderTimerFooter() {
   var count = state.drills.length;
   var canStart = count > 0;
   var h = "";
-  h += '<button type="button" class="btn-lg btn-lg-primary" id="picker-start" style="width:100%;" aria-label="Start today\'s session — each lab plays at its own run"' + (canStart ? "" : " disabled") + ">" + icon("play", 20) + " Start" + (count > 0 ? " · " + count + (count === 1 ? " lab" : " labs") : "") + "</button>";
+  h += '<button type="button" class="btn-lg btn-lg-primary" id="picker-start" aria-label="Start today\'s session — each lab plays at its own run"' + (canStart ? "" : " disabled") + ">" + icon("play", 20) + " Start" + (count > 0 ? " · " + count + (count === 1 ? " lab" : " labs") : "") + "</button>";
   foot.innerHTML = h;
   var startBtn = document.getElementById("picker-start");
   if (startBtn) startBtn.addEventListener("click", function () {
@@ -2975,9 +3068,9 @@ function transportHTML() {
   if (count > 1) h += '<p class="lab-of">Lab ' + (idx + 1) + " of " + count + "</p>";
   return h;
 }
-/* Actual time so far, centered in the session's top bar between
-   Finish and the close button in every mode: this lab's clock and
-   the session's. These are the numbers the end-of-session log is
+/* Actual time so far, centered in the session's top bar with
+   Finish at its right in every mode: this lab's clock and the
+   session's. These are the numbers the end-of-session log is
    built from — repeats included, because they count the
    wall-clock time the lab actually ran. */
 function elapsedHTML() {
@@ -3016,16 +3109,23 @@ function renderSession() {
     fitVars = ' style="--sess-item:' + itemPx + "px;--sess-clock:" + clockPx + "px;--sess-gap:" + gapPx + 'px;"';
   }
   var h = '<div class="session-inner' + (session.done ? " done" : "") + '"' + fitVars + ">";
-  /* Top bar: Finish left, the This lab / Session elapsed times
-     centered, close right — one row, all three aligned. No lab
-     name anywhere in a running session — every mode shows just
-     its slots. On the Done screen the elapsed line is gone (the
-     log below carries the totals), leaving an empty center cell
-     so the close button keeps its corner. */
+  /* Top bar (batch .20): the This lab / Session elapsed times
+     centered, Finish in the top right — the × is gone, since it
+     did exactly what Finish does. No lab name anywhere in a
+     running session — every mode shows just its slots. On the
+     Done screen the elapsed line and Finish are gone (the log
+     below carries the totals) and the close button keeps the
+     right-hand corner. */
   h += '<div class="session-topbar">';
-  h += finishBtnHTML();
-  h += session.done ? '<span aria-hidden="true"></span>' : elapsedHTML();
-  h += '<button type="button" class="iconbtn" id="s-close" aria-label="Close practice" style="background:var(--surface);">' + icon("x", 20) + "</button></div>";
+  if (session.done) {
+    h += '<span aria-hidden="true"></span><span aria-hidden="true"></span>';
+    h += '<button type="button" class="iconbtn" id="s-close" aria-label="Close practice" style="background:var(--surface);">' + icon("x", 20) + "</button>";
+  } else {
+    h += '<span aria-hidden="true"></span>';
+    h += elapsedHTML();
+    h += finishBtnHTML();
+  }
+  h += "</div>";
   h += '<div class="session-center">';
   if (session.done) {
     /* The session log: actual time per lab — every round and pass
@@ -3050,7 +3150,7 @@ function renderSession() {
       h += '<button type="button" class="transport" id="s-again">' + icon("play", 24) + " Again</button></div>";
     } else {
       h += '<div class="mt4" style="max-width:480px;margin-left:auto;margin-right:auto;width:100%;text-align:left;">';
-      h += '<label class="stage-field-label" for="s-log-note" style="color:var(--text);">Notes from this session <span class="dim" style="font-weight:400;">(optional)</span></label>';
+      h += '<label class="stage-field-label" for="s-log-note">Notes from this session <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>';
       h += '<textarea class="note-body-input" id="s-log-note" rows="3" placeholder="What clicked, what to revisit…" style="font-size:16px;">' + esc(session.logDraft) + "</textarea>";
       h += '<button type="button" class="btn-lg btn-lg-volt mt2" id="s-save-log" style="width:100%;">' + icon("note", 20) + " Save session note</button>";
       h += '<p class="dim small" style="margin:6px 0 0;line-height:1.45;">Creates a note with these labs attached and the total time — the labs don\'t need to be saved labs.</p>';
@@ -3064,7 +3164,6 @@ function renderSession() {
     h += '<p class="kicker" style="font-size:13px;margin:0;color:var(--break);">Round ' + session.roundNumber + ' done</p>';
     h += '<p class="fd break-big" id="s-break">Break — next round in ' + Math.ceil(session.remaining) + 's</p>';
     h += '<div class="bar session-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(progress) + '" aria-label="Time through this break"><i id="s-bar" style="width:' + progress + '%;background:var(--break);"></i></div>';
-    h += transportHTML();
     h += "</div>";
   } else if (mode === "rounds") {
     var totalStages = (run.roundSeconds || 60) / STAGE_SECONDS;
@@ -3072,7 +3171,7 @@ function renderSession() {
     var dots = "";
     for (var di = 1; di <= totalStages; di++) dots += '<i class="' + (di <= stageNow ? "on" : "") + '"></i>';
     h += '<canvas class="rounds-particles" id="rounds-canvas" aria-hidden="true"></canvas>';
-    h += '<div class="rounds-content">';
+    h += '<div class="rounds-content spread">';
     h += '<p class="kicker accent" style="font-size:13px;margin:0;">Round ' + session.roundNumber + ' <span class="dim">· ' + run.roundSeconds + "s rounds</span></p>";
     h += '<div class="session-items mt3">';
     items.forEach(function (it) {
@@ -3082,7 +3181,6 @@ function renderSession() {
     h += '<p class="fd session-clock mt4" id="s-clock" aria-label="' + esc(fmtClock(session.remaining)) + ' remaining">' + esc(fmtClock(session.remaining)) + "</p>";
     h += '<div class="bar session-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(progress) + '" aria-label="Time through this round"><i id="s-bar" style="width:' + progress + '%"></i></div>';
     h += '<div class="stage-dots mt3" id="s-dots" aria-hidden="true">' + dots + "</div>";
-    h += transportHTML();
     h += "</div>";
   } else if (mode === "together") {
     h += '<p class="kicker accent" style="font-size:13px;margin:0;">Layered <span class="dim">· ' + run.togetherMinutes + " min</span></p>";
@@ -3093,11 +3191,15 @@ function renderSession() {
     h += "</div>";
     h += '<p class="fd session-clock mt4" id="s-clock" aria-label="' + esc(fmtClock(session.remaining)) + ' remaining">' + esc(fmtClock(session.remaining)) + "</p>";
     h += '<div class="bar session-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(progress) + '" aria-label="Time through this lab"><i id="s-bar" style="width:' + progress + '%"></i></div>';
-    h += transportHTML();
   } else if (cur) {
     h += '<p class="kicker accent" style="font-size:13px;margin:0;">In turn <span class="dim">· ' + run.inTurnSeconds + "s each</span>" + (session.loop && session.round > 1 ? ' <span class="dim">· Pass ' + session.round + "</span>" : "") + "</p>";
-    h += '<p class="kicker dim" style="margin:12px 0 0;">' + esc(itemLabel(cur)) + "</p>";
-    h += '<p class="fd session-item mt1"' + sessionItemAttrs(cur) + ">" + esc(cur.item) + "</p>";
+    /* The one slot lives in its own block filling the stage, so
+       the category + item sit centered in the same space the
+       stacked modes spread their blocks through. */
+    h += '<div class="session-slotblock">';
+    h += '<p class="kicker dim" style="margin:0;">' + esc(itemLabel(cur)) + "</p>";
+    h += '<p class="fd session-item"' + sessionItemAttrs(cur) + ">" + esc(cur.item) + "</p>";
+    h += "</div>";
     h += '<p class="fd session-clock mt4" id="s-clock" aria-label="' + esc(fmtClock(session.remaining)) + ' on this item">' + esc(fmtClock(session.remaining)) + "</p>";
     h += '<div class="bar session-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(progress) + '" aria-label="Time through this item"><i id="s-bar" style="width:' + progress + '%"></i></div>';
     /* Slot buttons sit under the timer, above the transport — they
@@ -3108,17 +3210,24 @@ function renderSession() {
       h += '<button type="button" class="jumpchip" data-jump="' + i + '" aria-label="Jump to item ' + (i + 1) + ": " + esc(chipText) + '"' + (i === idx ? ' aria-current="true"' : "") + ">" + (i + 1) + ". " + esc(chipText) + "</button>";
     });
     h += "</div>";
-    h += transportHTML();
   }
-  h += "</div></div>";
+  h += "</div>";
+  /* The transport is pinned under the stage (batch .20): prev /
+     pause / next and Lab N of M sit at the bottom of the session,
+     right above the tab bar, at the same position in every mode
+     and for every lab — they are rendered once, outside the
+     per-mode stage, so nothing about a lab can move them. */
+  if (!session.done) h += '<div class="session-transport">' + transportHTML() + "</div>";
+  h += "</div>";
   el.innerHTML = h;
   el.classList.toggle("break", mode === "rounds" && session.phase === "break" && !session.done);
   if (mode === "rounds" && !session.done) roundsFx.start(document.getElementById("rounds-canvas"));
   else roundsFx.stop();
-  /* Closing mid-session with time on the clock lands on the log
-     first — the time she actually spent shouldn't vanish on an
-     stray tap. From the log, Close really closes. */
-  document.getElementById("s-close").addEventListener("click", function () {
+  /* The close button exists only on the Done screen now (the
+     running top bar carries Finish instead — they did the same
+     thing). From the log, Close really closes. */
+  var closeBtn = document.getElementById("s-close");
+  if (closeBtn) closeBtn.addEventListener("click", function () {
     if (!session.done && session.totalElapsed >= 3) session.finish();
     else session.close();
   });
@@ -3191,12 +3300,13 @@ function labsPairs() {
 function renderLabs() {
   var el = document.getElementById("view-labs");
   var editing = state.editingLabId ? findLab(state.editingLabId) : null;
-  /* One self-contained builder card: the slots and the actions that act
-     on them (Save lab / Send to Timer) live together inside it, under
-     the same card title the Timer page's picker carries. A new category
-     comes from the + beside any slot's category dropdown. */
-  var h = '<section class="card" style="padding:12px;" aria-label="Lab builder">';
-  h += '<h2 class="fd" style="font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.03em;margin:0 0 8px;">' + (editing ? "Edit lab" : "Create lab") + "</h2>";
+  /* The builder's title stands OUTSIDE its card (batch .20),
+     left-aligned with Your labs below and in the same style —
+     the card itself holds just the slots and the actions that act
+     on them (Save lab / Send to Timer). A new category comes from
+     the + beside any slot's category dropdown. */
+  var h = '<h2 class="sec">' + (editing ? "Edit lab" : "Create lab") + "</h2>";
+  h += '<section class="card mt3" style="padding:12px;" aria-label="Lab builder">';
   h += '<div data-picker="labs"></div>';
   h += '<div class="row wrap mt2">';
   h += '<button type="button" class="btn" id="labs-add-slot">' + icon("plus", 14) + " Add slot</button>";
@@ -3558,6 +3668,18 @@ function renderLabsList() {
       state.labsEditNoteSearch = "";
       renderLabs();
       document.getElementById("view-labs").scrollTop = 0;
+    });
+  });
+  /* The whole card is tappable (batch .20): a tap anywhere that
+     isn't one of the card's own buttons opens what the top-right
+     action opens — the editor for a lab, the note for a note lab. */
+  el.querySelectorAll(".lab-card").forEach(function (card) {
+    card.addEventListener("click", function (e) {
+      if (e.target.closest("button, a, select, input, textarea")) return;
+      var editBtn = card.querySelector("[data-lab-edit]");
+      var noteBtn = card.querySelector("[data-lab-opennote]");
+      if (editBtn) editBtn.click();
+      else if (noteBtn) noteBtn.click();
     });
   });
   el.querySelectorAll("[data-lab-dup]").forEach(function (b) {
@@ -4896,11 +5018,11 @@ function fanHTML() {
   if (state.fanOpen) {
     h += '<div role="menu" aria-label="Add options" style="display:flex;flex-direction:column;align-items:flex-end;">';
     h += '<button type="button" class="fan-opt" role="menuitem" id="fan-add-note" aria-label="Add note"><span class="oi" style="background:var(--accent);color:#fff;">' + icon("note", 20) + "</span>Add note</button>";
-    h += '<button type="button" class="fan-opt" role="menuitem" id="fan-add-category" aria-label="Add category"><span class="oi" style="background:var(--volt);color:#000;">' + icon("tag", 20) + "</span>Add category</button>";
+    h += '<button type="button" class="fan-opt" role="menuitem" id="fan-add-category" aria-label="Organize tags"><span class="oi" style="background:var(--volt);color:#000;">' + icon("tag", 20) + "</span>Organize tags</button>";
     h += '<button type="button" class="fan-opt" role="menuitem" id="fan-create-lab" aria-label="Create lab"><span class="oi" style="border:1px solid rgba(255,210,63,0.6);color:var(--volt);">' + icon("flask", 20) + "</span>Create lab</button>";
     h += "</div>";
   }
-  h += '<button type="button" class="fan-main" id="fan-main" aria-haspopup="menu" aria-expanded="' + (state.fanOpen ? "true" : "false") + '" aria-label="' + (state.fanOpen ? "Close the add menu" : "Add — open the menu for Add note, Add category, and Create lab") + '">' + (state.fanOpen ? icon("x", 32) : icon("plus", 32)) + "</button>";
+  h += '<button type="button" class="fan-main" id="fan-main" aria-haspopup="menu" aria-expanded="' + (state.fanOpen ? "true" : "false") + '" aria-label="' + (state.fanOpen ? "Close the add menu" : "Add — open the menu for Add note, Organize tags, and Create lab") + '">' + (state.fanOpen ? icon("x", 32) : icon("plus", 32)) + "</button>";
   h += "</div>";
   return h;
 }
@@ -4926,7 +5048,10 @@ function renderNotesList(el) {
   }
   h += '<div id="notes-filter-meta">' + notesFilterMetaHTML() + "</div>";
   h += "</section></div>";
-  h += '<div class="notes-results-scroll" id="notes-scroll"><div id="notes-results">' + notesResultsHTML() + "</div>";
+  /* "Your notes" titles the list under the search block, in the
+     same style as the other pages' section titles — it scrolls
+     with the results. */
+  h += '<div class="notes-results-scroll" id="notes-scroll"><h2 class="sec" style="margin:0;">Your notes</h2><div id="notes-results" class="mt3">' + notesResultsHTML() + "</div>";
   h += '<div style="height:96px;" aria-hidden="true"></div></div>';
   h += fanHTML();
   el.innerHTML = h;
@@ -5001,7 +5126,7 @@ function renderNoteWriter(el) {
   el.classList.remove("notes-list-mode");
   var h = '<button type="button" class="btn fd" id="writer-back" aria-label="Back to the previous screen" style="padding:10px 18px;font-size:15px;font-weight:700;text-transform:uppercase;background:var(--surface);">' + icon("chevL", 20) + " Back</button>";
   h += '<h2 class="fd" style="font-size:24px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;margin:20px 0 0;">New note</h2>';
-  h += '<label for="new-note-body" style="display:block;font-size:14px;font-weight:700;margin-top:12px;">Note</label>';
+  h += '<label class="flabel" for="new-note-body" style="margin-top:12px;">Note</label>';
   /* Plain native input styling on purpose: enlarged line-height makes
      iOS draw the caret on a different line grid than the text, and
      type under 16px makes it auto-zoom on focus — both throw the
@@ -5169,7 +5294,7 @@ function renderNoteDetail(el) {
     h += '<div class="mt2" style="display:grid;gap:6px;">';
     attachedLabs.forEach(function (lab) {
       var nm = lab.name || labName(pairsForLab(lab));
-      h += '<div class="row" style="justify-content:space-between;border:1px solid var(--border);background:var(--bg);border-radius:8px;padding:8px 12px;"><span style="min-width:0;overflow-wrap:break-word;font-weight:600;">' + esc(nm) + '</span><button type="button" class="iconbtn sm" data-detach-lab="' + esc(nm) + '" aria-label="Detach lab ' + esc(nm) + ' from this note">' + icon("x", 16) + "</button></div>";
+      h += '<div class="row" style="justify-content:space-between;align-items:center;border:1px solid var(--border);background:var(--bg);border-radius:8px;padding:8px 12px;"><span style="flex:1;min-width:0;overflow-wrap:break-word;font-weight:600;">' + esc(nm) + '</span><button type="button" class="iconbtn sm" data-detach-lab="' + esc(nm) + '" aria-label="Detach lab ' + esc(nm) + ' from this note" style="flex:none;width:32px;height:32px;min-width:32px;min-height:32px;aspect-ratio:1/1;border-radius:50%;">' + icon("x", 16) + "</button></div>";
     });
     h += "</div>";
   }
@@ -5199,7 +5324,7 @@ function renderNoteDetail(el) {
   h += "</div>";
   h += "</div>";
   if (initialChunks(note.body).length > 1) {
-    h += '<button type="button" class="btn fd mt4" id="note-split-btn" aria-label="Split this note into smaller notes" style="padding:10px 16px;font-size:13px;font-weight:700;text-transform:uppercase;background:var(--surface);">Split into smaller notes</button>';
+    h += '<button type="button" class="btn-lg btn-lg-ghost mt4" id="note-split-btn" aria-label="Split this note into smaller notes">Split into smaller notes</button>';
   }
   if (note.userId !== null) {
     h += '<div class="mt3"><button type="button" class="btn" id="note-delete-btn" aria-label="Delete this note" style="padding:10px 16px;color:var(--dim);">' + icon("trash", 16) + " Delete note</button></div>";
@@ -5474,10 +5599,9 @@ function openCategoriesScreen() {
   renderCategoriesScreen();
   document.getElementById("cat-view").hidden = false;
   document.getElementById("cat-view").scrollTop = 0;
-  setTimeout(function () {
-    var inp = document.getElementById("cat-name");
-    if (inp) inp.focus();
-  }, 30);
+  /* No autofocus (batch .20): arriving on this screen must not
+     land with the category name input already highlighted and the
+     keyboard up — she focuses a field when she means to type. */
 }
 function closeCategoriesScreen() {
   var el = document.getElementById("cat-view");
@@ -5496,10 +5620,10 @@ function renderCategoriesScreen() {
   h += '<p class="dim" style="font-size:16px;margin:6px 0 0;">Add a category here and it shows up everywhere — Labs, Timer, and the tag picker. No lab needed. The + on a category adds an item to it, and tapping any item lets you rename it, move it, or take it out.</p>';
   h += '<section class="card mt4" style="padding:12px 14px;" aria-label="Add a category">';
   h += '<p class="card-head">' + icon("tag", 16) + "<span>New category</span></p>";
-  h += '<label class="kicker dim" for="cat-name" style="display:block;margin-top:12px;">Category name</label>';
+  h += '<label class="flabel" for="cat-name" style="margin-top:12px;">Category name</label>';
   h += '<input class="field mt1" id="cat-name" placeholder="New category name" autocomplete="off" maxlength="40" value="' + esc(catDraftName) + '" />';
   h += '<p class="small mt1" id="cat-clash" style="color:var(--dim);margin-bottom:0;" hidden></p>';
-  h += '<label class="kicker dim" for="cat-item" style="display:block;margin-top:16px;">Items <span style="text-transform:none;letter-spacing:0;font-weight:400;">(optional — add more later)</span></label>';
+  h += '<label class="flabel" for="cat-item" style="margin-top:16px;">Items <span style="text-transform:none;letter-spacing:0;font-weight:400;">(optional — add more later)</span></label>';
   if (catDraftItems.length > 0) {
     h += '<div class="row wrap mt1" style="gap:6px;">';
     catDraftItems.forEach(function (it) {
@@ -9579,7 +9703,11 @@ var bloomAnim = (function () {
       "  gl_FragColor = vec4(velocity, 0.0, 1.0);",
       "}"
     ].join("\n"));
-    var displayProg = program("precision highp float; precision highp sampler2D; varying vec2 vUv; uniform sampler2D uTexture; void main () { vec3 c = texture2D(uTexture, vUv).rgb; gl_FragColor = vec4(c, 1.0); }");
+    /* The display adds the app background (#0d0b10) under the dye,
+       so Word bloom's stage is the same colour as Four points and
+       Shapeshifter, which both fill their canvases with it — the
+       dye itself is additive light over that base. */
+    var displayProg = program("precision highp float; precision highp sampler2D; varying vec2 vUv; uniform sampler2D uTexture; void main () { vec3 c = texture2D(uTexture, vUv).rgb; gl_FragColor = vec4(c + vec3(0.051, 0.043, 0.063), 1.0); }");
     /* Encodes the velocity field into an 8-bit target so the CPU
        can read it back and advect the bloom particles with the
        sim's own velocities. Range ±600 sim units maps to 0..1. */
