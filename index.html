@@ -31,10 +31,18 @@
         --accent: #ff4d2e;
         --volt: #ffd23f;
         --radius: 12px;
-        /* The bottom safe-area inset, used plainly — the tab bar
-           adds it as padding under its buttons, the way any
-           website's sticky bottom bar does. */
-        --inset-b: env(safe-area-inset-bottom, 0px);
+        /* The bottom safe-area inset, capped at the real
+           home-indicator inset. In a browser tab env() reports the
+           true inset (34px on a Face ID iPhone, 0 where there is no
+           home indicator), but the Home Screen (standalone) webview
+           inflates it — ~94px was measured there — and the tab bar
+           padded itself with the inflated number, leaving a band of
+           dead space under its buttons that Safari and Chrome never
+           show. The true bottom inset is never more than 34px, so
+           the cap changes nothing anywhere else. A script probe
+           (fixStandaloneInset) re-pins the same cap in standalone
+           as a second line of defence. */
+        --inset-b: min(env(safe-area-inset-bottom, 0px), 34px);
         /* The tab bar's total height: 40px of content (2px inner top
            padding + 38px button: 4px pad, 18px icon, 2px gap, label,
            2px pad) plus the home-indicator inset. One variable, used
@@ -160,7 +168,10 @@
          the Home Screen copy. The bar's height is exactly
          --tabbar-h, and #app reserves that much room at its
          bottom (see the safe-areas section), so no content ever
-         slides under it. No script, no measuring. */
+         slides under it. Its one script assist is the standalone
+         inset probe, which keeps the Home Screen webview's
+         inflated bottom inset from padding the bar tall — see
+         --inset-b and fixStandaloneInset. */
       #tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; height: var(--tabbar-h); border-top: 1px solid var(--border); background: rgba(13, 11, 16, 0.97); }
       #tabbar .inner { display: grid; grid-template-columns: repeat(5, 1fr); height: 100%; max-width: 768px; margin: 0 auto; padding: 2px 8px var(--inset-b); }
       #tabbar button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0 2px; border-radius: 8px; font-family: "Archivo", system-ui, sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dim); }
@@ -1442,7 +1453,39 @@ var FALLBACK_BAKED = {
    as empty space under the tab bar, for one) and init() reloads once
    to pick up the fresh document. The Style guide shows this stamp so
    a stale copy can be spotted at a glance. */
-var BUILD_ID = "2026-11-12.47";
+var BUILD_ID = "2026-11-13.48";
+
+/* ---------------- Home Screen inset fix ----------------
+   The Home Screen (standalone) webview reports an inflated
+   safe-area-inset-bottom (~94px against the real 34px home-
+   indicator inset), and the tab bar used to pad itself with the
+   reported number — a band of dead space under its buttons that
+   never appears in Safari or Chrome, whose own toolbars sit
+   where the padding would show. --inset-b is already capped at
+   34px in CSS; this probe is the second line of defence for
+   webviews that resolve env() inside var() differently: in
+   standalone only, it measures the raw env() value off a throw-
+   away element and, when the value is inflated, pins --inset-b
+   to the true 34px on the root element, which outranks the
+   stylesheet. It re-checks on resize (rotation can change the
+   inset) and steps aside whenever the reported value is sane. */
+function fixStandaloneInset() {
+  try {
+    var root = document.documentElement;
+    var standalone = (window.navigator && window.navigator.standalone === true) ||
+      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+    if (!standalone || !document.body) return;
+    var probe = document.createElement("div");
+    probe.style.cssText = "position:fixed;left:0;bottom:0;width:1px;height:0;visibility:hidden;pointer-events:none;padding-bottom:env(safe-area-inset-bottom,0px);";
+    document.body.appendChild(probe);
+    var reported = probe.offsetHeight;
+    if (probe.parentNode) probe.parentNode.removeChild(probe);
+    if (reported > 34) root.style.setProperty("--inset-b", "34px");
+    else root.style.removeProperty("--inset-b");
+  } catch (e) { /* the CSS cap on --inset-b still bounds the bar */ }
+}
+fixStandaloneInset();
+window.addEventListener("resize", fixStandaloneInset);
 
 /* ------------------------------ storage ------------------------------ */
 function storeGet(key, fallback) {
