@@ -136,7 +136,8 @@
          tap) and plain leading; each keeps only its height,
          radius, fill and padding. Text fields and selects are
          36px; the search field keeps its 42px exception, and the
-         Party top-bar select stays 32px to match its 32px bar. */
+         Party top-bar select is 48px to match its 48px bar
+         (batch .44). */
       .field, .tag-input, .search-input { width: 100%; border: 1px solid var(--border); color: var(--text); font-size: 16px; line-height: normal; }
       .field { height: 36px; min-height: 36px; border-radius: 8px; background: var(--bg); padding: 7px 8px; }
       select.field { appearance: auto; }
@@ -249,7 +250,8 @@
 
       /* ---------- party ---------- */
       /* The Party tab is one full-bleed stage: the dance clip is the
-         background, a 32px top bar (dance dropdown + info button) and
+         background, a 48px top bar (dance dropdown + info button, the
+         L tier since batch .44) and
          the transport float over it, and the dance info lives in a
          flat sheet behind the info button. No steps, no teaching. */
       #view-party { padding: 0; max-width: none; overflow: hidden; position: relative; background: #000; }
@@ -267,8 +269,6 @@
       .party-figure { width: 92px; height: 92px; color: #fff; animation: party-bob 0.8s ease-in-out infinite; position: relative; z-index: 1; }
       @keyframes party-bob { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-10px) rotate(3deg); } }
       .party-stage.paused .party-ring, .party-stage.paused .party-figure { animation-play-state: paused; }
-      .party-ph-tag { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.85); background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.22); padding: 5px 10px; border-radius: 999px; }
-      .party-ph-sub { font-size: 12px; color: rgba(255,255,255,0.72); max-width: 36ch; margin-top: 4px; }
       .party-shade-top, .party-shade-bottom { position: absolute; left: 0; right: 0; pointer-events: none; z-index: 1; }
       .party-shade-top { top: 0; height: 110px; background: linear-gradient(to bottom, rgba(13,11,16,0.72), rgba(13,11,16,0)); }
       .party-shade-bottom { bottom: 0; height: 170px; background: linear-gradient(to top, rgba(13,11,16,0.78), rgba(13,11,16,0)); }
@@ -505,7 +505,7 @@
       input, textarea, select { scroll-margin-bottom: 9rem; }
       /* The Timer's sticky footer sits on the elevated surface color. */
       #timer-footer { background: var(--surface); }
-      /* One clock size across Layered, In turn and Rounds. */
+      /* One clock size across Freeform, In turn and Rounds. */
       .session-clock { font-size: 60px; }
       /* Session transport: prev / pause / next on one line, Lab N of M under it. */
       .transport-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 28px; }
@@ -772,7 +772,7 @@
       .session-topbar .session-elapsed { margin: 0; text-align: left; line-height: 1.3; }
       #session #s-finish { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 0 14px; margin-left: auto; flex: none; }
       .session-topbar #s-close { margin-left: auto; flex: none; }
-      /* Per-lab fit: the stacked modes (Layered / Rounds) render
+      /* Per-lab fit: the stacked modes (Freeform / Rounds) render
          every item at once, so renderSession sets --sess-item,
          --sess-clock and --sess-gap on .session-inner from the
          lab's item count — more items, smaller type and tighter
@@ -981,19 +981,20 @@
          siblings of .builder-scroll. */
       .builder-card { height: min(600px, 100%); max-height: 100%; }
       /* ================= batches .31/.32/.34, consolidated in .35 =================
-         Card buttons carry tiers, not card rules: lab cards (.is-lab)
-         and Conductor preset cards (.is-cond) use Button M / Icon M,
-         bloom cards (.is-bloom) use Button S / Icon S, and a card's
-         notes toggle + Add note use Button S — all via the tier
-         classes on the buttons themselves (batch .35). What stays
-         here is only the corner geometry: the top-right action is
-         FIXED to the card's corner (12px in), and the title row
-         keeps clear of it — 48px beside an M corner button, 40px
-         beside an S one. Card headers are 16px and card item text
-         is 14px (set in the renderers). */
+         Card buttons carry tiers, not card rules: every Labs-list
+         card — lab cards (.is-lab), Conductor preset cards
+         (.is-cond) and bloom cards (.is-bloom) — uses Button M /
+         Icon M on the one shared card block (batch .44 retired
+         the bloom cards' S tier), and a card's notes toggle +
+         Add note use Button S — all via the tier classes on the
+         buttons themselves (batch .35). What stays here is only
+         the corner geometry: the top-right action is FIXED to
+         the card's corner (12px in), and the title row keeps
+         clear of it — 48px beside the M corner button. Card
+         headers are 16px and card item text is 14px (set in the
+         renderers). */
       .lab-card { position: relative; }
       .lab-card > .row:first-child { padding-right: 48px; }
-      .lab-card.is-bloom > .row:first-child { padding-right: 40px; }
       .lab-card > .row > .iconbtn { position: absolute; top: 12px; right: 12px; }
       /* ================= batch .32: pair minimums (2026-11-12) ================= */
       /* Large button pairs: the longer-text button never drops below
@@ -1054,8 +1055,8 @@
          shared menu-row rule: .move-list buttons, .export-menu
          buttons and .tag-drop options are 36px at font 16.
          Exceptions kept: the search field stays 42px at font 16,
-         and the Party top-bar select stays 32px at font 13 to
-         match its 32px bar. Field titles (.flabel labels,
+         and the Party top-bar select rides its own 48px bar size
+         (batch .44: 48px at font 14). Field titles (.flabel labels,
          .slot-grid label, .stage-field-label) sit 8px above their
          field via margin-bottom on the label. Note text is 18px
          everywhere it is read or written, via the one shared
@@ -1156,6 +1157,112 @@
       .labs-pair { min-width: 0; }
       .labs-pair .btn-lg-pair { min-width: 0; }
       @media (max-width: 480px) { .labs-pair .btn-lg-pair { padding-left: 8px; padding-right: 8px; gap: 6px; } }
+
+      /* ================= batch .44: feedback pass (2026-11-12) =================
+         (1) ONE modal max height, shared by every modal: the cap
+         is --modal-max-h — the viewport minus the tab bar minus a
+         24px breathing gap — and it lands on every modal card at
+         once (.modal-card for confirm / move / rename / bloom
+         words / session composer / session list, .builder-card
+         for the lab builder + plain timer, and the Party sheet).
+         No modal can exceed the viewport: each backdrop box
+         already ends above the tab bar (batch .30), and now every
+         centered backdrop also pads its top with the safe-area
+         inset, so no card slides under the notch (the bloom words
+         modal's title sat under the status-bar clock). Tall
+         middles keep scrolling inside their card (.modal-scroll /
+         .bloom-words-scroll / .builder-scroll), with the action
+         row pinned below them. Saving many blooms just lengthens
+         that inner scroll — the modal itself never grows.
+         (5) The Party top bar goes up one tier to L: the dance
+         select is 48px at font 14 and the info button rides the
+         new .iconbtn-l (48×48, 24px icon — the Icon L geometry on
+         an .iconbtn); the bar's own height follows its contents.
+         (12) The Style guide can never scroll sideways: its view
+         clips horizontal overflow outright, specimens are capped
+         at their container's width, and the two specimen rows
+         wider than a phone card (the session transport and the
+         Conductor dock) wrap inside the guide instead of pushing
+         the page sideways. Live screens keep their one-line
+         transport — the wrap is guide-only. */
+      :root { --modal-max-h: calc(100dvh - var(--tabbar-h) - 24px); }
+      #modal-root, #session-note-modal, #session-list-modal { padding: max(12px, env(safe-area-inset-top, 0px)) 16px 12px; }
+      .modal-card, .builder-card { max-height: min(100%, var(--modal-max-h)); }
+      .party-sheet { max-height: min(86%, var(--modal-max-h)); }
+      .party-select-wrap select { height: 48px; min-height: 48px; font-size: 14px; padding: 0 40px 0 14px; border-radius: 12px; }
+      .party-select-wrap > svg.ic { right: 12px; width: 16px; height: 16px; }
+      /* Icon button L for an .iconbtn: the shared Icon L geometry
+         (48×48, 24px icon) as a modifier, so a button can step up
+         from Icon M without changing its class family. */
+      .iconbtn-l { width: 48px; height: 48px; min-width: 48px; min-height: 48px; }
+      .iconbtn-l > svg.ic { width: 24px; height: 24px; }
+      #guide-view { overflow-x: hidden; }
+      .sg-specimen { min-width: 0; max-width: 100%; }
+      .sg-specimen > * { max-width: 100%; }
+      #guide-view .transport-row { flex-wrap: wrap; }
+      #guide-view .conductor-dock { flex-wrap: wrap; max-width: 100%; }
+
+      /* ================= batch .45: save-note side, button padding floor, category pair + chips, Timer footer flip (2026-11-12) =================
+         (1) The New Note save bar puts Save note on the RIGHT:
+         Save & add another leads on the left (its batch .32
+         half-width floor still applies to it alone) and Save note
+         fills the rest on the right — see renderNoteWriter.
+         (2) One shared minimum horizontal padding for buttons:
+         the standard .btn now pads 16px a side (Button L already
+         carries 20px), the Timer footer's large buttons rise from
+         their old 10px to the same 16px, and the small-form Cancel
+         buttons lose the tighter 10px inline padding that crowded
+         their label — every standard button pads its label the
+         same. (Button S and the .btn-lg-pair members keep their
+         tier / pair padding: their widths are governed by their
+         pair flex, per batches .35 and .43.)
+         (3) The Categories form's Create / Cancel pair follows
+         the batch .43 pattern (.cat-pair): Create category keeps
+         flex:0 0 auto (its content width), Cancel flexes to fill
+         what is left, and NEITHER member carries the batch .32
+         half-width floor — that floor is what broke Cancel past
+         the card's right edge, since Create's content width plus
+         Cancel's floored half plus the gap exceeded the row.
+         (4) Draft item chips clear the field beside them: the
+         chips row (.cat-draft-chips) carries a real 8px bottom
+         margin, so a chip can never sit on the item input's edge
+         (Categories screen) or crowd the form's action row
+         (picker form, whose empty chips row takes no room).
+         (5) The Timer footer flips its split: Add lab is
+         flex:0 0 auto (fits its content) and Start fills the
+         remaining width — #timer-footer-inner flexes and its
+         button fills it, with the batch .32 floor on Start
+         removed. This supersedes the batch .17 footer rules and
+         the batch .32 Start floor above. */
+      .btn:not(.btn-s) { padding-left: 16px; padding-right: 16px; }
+      #timer-footer .btn-lg { padding-left: 16px; padding-right: 16px; }
+      .cat-pair { min-width: 0; }
+      .cat-pair .btn-lg-pair { min-width: 0; }
+      .cat-draft-chips { margin-bottom: 8px; }
+      [data-cat-items]:empty { margin-bottom: 0; }
+      #timer-footer #open-builder { flex: 0 0 auto; }
+      #timer-footer-inner { flex: 1 1 0; min-width: 0; }
+      #timer-footer-inner .btn-lg { flex: 1; width: 100%; min-width: 0; }
+
+      /* ================= batch .46: Categories ends at the nav line + Freeform rename (2026-11-12) =================
+         (1) The Categories screen is a full-screen overlay
+         (.overlay, inset: 0), so unlike the main views — which
+         live inside #app, whose bottom padding reserves exactly
+         the tab bar's height — it ran all the way to the screen's
+         bottom edge and its last rows sat hidden behind the
+         pinned tab bar. Ending the overlay at the tab bar's
+         height, the same rule the running session (#session)
+         and every modal backdrop already carry (batches .30 /
+         safe-areas), makes its content end at the nav line like
+         Timer, Labs, Notes and Conductor: the overlay's own
+         scroller now stops at the bar, and its inner 32px bottom
+         padding is clearance above the bar, never under it.
+         (2) The "together" run mode is displayed as Freeform
+         everywhere (mode switch, run badges, session kickers,
+         Style guide specimens and behaviour notes) — a display
+         rename only: the internal mode key ("together"),
+         togetherMinutes and all stored runs are unchanged. */
+      #cat-view { bottom: var(--tabbar-h); }
     </style>
   </head>
   <body>
@@ -1225,7 +1332,7 @@
       </nav>
     </div>
 
-    <!-- Practice session (per-lab runs: Layered / In turn / Rounds) -->
+    <!-- Practice session (per-lab runs: Freeform / In turn / Rounds) -->
     <div id="session" class="overlay" role="dialog" aria-modal="true" hidden></div>
 
     <!-- Lab builder modal (Timer option B): pick or build a lab and
@@ -1335,7 +1442,7 @@ var FALLBACK_BAKED = {
    as empty space under the tab bar, for one) and init() reloads once
    to pick up the fresh document. The Style guide shows this stamp so
    a stale copy can be spotted at a glance. */
-var BUILD_ID = "2026-11-12.43";
+var BUILD_ID = "2026-11-12.47";
 
 /* ------------------------------ storage ------------------------------ */
 function storeGet(key, fallback) {
@@ -1918,7 +2025,7 @@ function drillTitle(d) {
    the session reaches it. A run is { mode, togetherMinutes,
    inTurnSeconds, roundSeconds } — mode picks which time applies.
    Drills queued before runs existed (or sent from the Labs tab)
-   read as the default Layered · 5 min until she sets one. */
+   read as the default Freeform · 5 min until she sets one. */
 function normalizeRun(run) {
   var r = run && typeof run === "object" ? run : {};
   var mode = r.mode === "inturn" || r.mode === "rounds" ? r.mode : "together";
@@ -1938,7 +2045,7 @@ function defaultRun() {
 }
 function cloneRun(run) { return normalizeRun(run); }
 function drillRun(d) { return normalizeRun(d && d.run); }
-function runModeLabel(mode) { return mode === "inturn" ? "In turn" : mode === "rounds" ? "Rounds" : "Layered"; }
+function runModeLabel(mode) { return mode === "inturn" ? "In turn" : mode === "rounds" ? "Rounds" : "Freeform"; }
 function runTimeLabel(run) {
   var r = normalizeRun(run);
   if (r.mode === "inturn") return r.inTurnSeconds + "s each";
@@ -1951,7 +2058,7 @@ function runDescription(mode) {
   if (mode === "rounds") return "Short rounds that build stage by stage, 10s break between. Rounds repeat until you tap Next.";
   return "Every item on screen at once — layer them together, freeform, for the full time.";
 }
-/* One pass through a lab at its run's settings: Layered runs its
+/* One pass through a lab at its run's settings: Freeform runs its
    minutes; In turn gives every item its seconds once; Rounds is
    one round plus its break. Repeats (extra passes / rounds) are
    NOT in this number — the session logs the time actually spent,
@@ -2331,9 +2438,9 @@ function newCategoryFormHTML(id, slot) {
   h += '<div style="margin-top:8px;"><label class="flabel" for="' + id + "-" + slot.uid + '-newcat-item">Items <span style="text-transform:none;letter-spacing:0;font-weight:400;">(optional — add more later)</span></label></div>';
   h += '<div class="row"><input class="field grow" id="' + id + "-" + slot.uid + '-newcat-item" data-field="new-category-item" placeholder="An item for this category…" autocomplete="off" maxlength="80" />';
   h += '<button type="button" class="btn btn-volt" data-act="add-cat-item" style="padding:7px 14px;flex:none;">Add</button></div>';
-  h += '<div class="row wrap mt1" data-cat-items></div>';
+  h += '<div class="row wrap mt1 cat-draft-chips" data-cat-items></div>';
   h += '<div class="row mt2"><button type="button" class="btn btn-volt" data-act="create-category" style="padding:7px 16px;">Create category</button>';
-  h += '<button type="button" class="btn" data-act="cancel-cat" style="padding:7px 10px;">Cancel</button></div>';
+  h += '<button type="button" class="btn" data-act="cancel-cat">Cancel</button></div>';
   h += "</div>";
   return h;
 }
@@ -2377,7 +2484,7 @@ function pickerHTML(id) {
         h += '<form class="additem-form" data-act="add-item-form"><label class="sr-only" for="' + id + "-" + slot.uid + '-new">New ' + esc(slot.category) + ' item</label>';
         h += '<input class="field" id="' + id + "-" + slot.uid + '-new" data-field="new-item" placeholder="New ' + esc(slot.category) + ' item" autocomplete="off" />';
         h += '<button type="submit" class="btn btn-volt" style="padding:7px 14px;">Add</button>';
-        h += '<button type="button" class="btn" data-act="cancel-add" style="padding:7px 10px;">Cancel</button></form>';
+        h += '<button type="button" class="btn" data-act="cancel-add">Cancel</button></form>';
       }
       h += "</div>";
     } else {
@@ -2727,7 +2834,7 @@ function builderRunHTML() {
   var h = '<div style="border-top:1px solid var(--border);margin-top:14px;padding-top:12px;">';
   h += '<p class="card-head">' + icon("timer", 16) + "<span>How it runs</span></p>";
   h += '<div class="mode-switch mt2" role="group" aria-label="How this lab runs">';
-  h += '<button type="button" data-runmode="together" aria-pressed="' + (run.mode === "together" ? "true" : "false") + '">Layered</button>';
+  h += '<button type="button" data-runmode="together" aria-pressed="' + (run.mode === "together" ? "true" : "false") + '">Freeform</button>';
   h += '<button type="button" data-runmode="inturn" aria-pressed="' + (run.mode === "inturn" ? "true" : "false") + '">In turn</button>';
   h += '<button type="button" data-runmode="rounds" aria-pressed="' + (run.mode === "rounds" ? "true" : "false") + '">Rounds</button>';
   h += "</div>";
@@ -3078,10 +3185,11 @@ function confirmLabBuilder() {
   showToast("Queued — " + runSummary(run) + ".");
 }
 /* Start lives in the sticky footer beside Add lab — the two sit
-   side by side in one row, each half the footer's width, with no
-   summary line above them. Start's own label keeps the lab count.
-   Each lab then plays at its OWN run — Start carries no mode of
-   its own. */
+   side by side in one row with no summary line above them. Add
+   lab fits its content; Start fills the remaining width (batch
+   .45 — the split used to run the other way). Start's own label
+   keeps the lab count. Each lab then plays at its OWN run —
+   Start carries no mode of its own. */
 function renderTimerFooter() {
   var foot = document.getElementById("timer-footer-inner");
   if (!foot) return;
@@ -3113,7 +3221,7 @@ function renderTimerFooter() {
    reuses the builder's "How it runs" controls (mode switch + that
    mode's time chips, same markup and wiring shape), seeded from
    the last-used run. Start opens a plain session: the mode sets
-   the timing structure alone — Layered is one countdown for the
+   the timing structure alone — Freeform is one countdown for the
    chosen duration, In turn repeats its interval, Rounds cycles
    rounds and 10s breaks — until Finish, which shows a simple
    Finished screen with no note, no log and no save.
@@ -3123,7 +3231,7 @@ function plainRunHTML() {
   var h = '<div>';
   h += '<p class="card-head">' + icon("timer", 16) + "<span>How it runs</span></p>";
   h += '<div class="mode-switch mt2" role="group" aria-label="Timer mode">';
-  h += '<button type="button" data-plainmode="together" aria-pressed="' + (run.mode === "together" ? "true" : "false") + '">Layered</button>';
+  h += '<button type="button" data-plainmode="together" aria-pressed="' + (run.mode === "together" ? "true" : "false") + '">Freeform</button>';
   h += '<button type="button" data-plainmode="inturn" aria-pressed="' + (run.mode === "inturn" ? "true" : "false") + '">In turn</button>';
   h += '<button type="button" data-plainmode="rounds" aria-pressed="' + (run.mode === "rounds" ? "true" : "false") + '">Rounds</button>';
   h += "</div>";
@@ -3566,7 +3674,7 @@ var session = {
   },
   advance: function () {
     /* Plain timer: the mode alone sets the structure, with no
-       items and no labs to move between. Layered runs its time
+       items and no labs to move between. Freeform runs its time
        once and finishes; In turn restarts its interval forever;
        Rounds cycles round → 10s break → next round forever —
        all until Finish is tapped. */
@@ -3601,7 +3709,7 @@ var session = {
     }
     /* Segment timer hit zero. What happens next is the CURRENT
        lab's run talking, not a session-wide mode: Rounds and In
-       turn repeat inside their lab until Next; Layered runs its
+       turn repeat inside their lab until Next; Freeform runs its
        time once and hands over to the next lab, whose own run
        takes over from there. */
     var mode = this.curMode();
@@ -3990,7 +4098,7 @@ function renderSession() {
   /* Plain timer: its own stage — no slots, no lab name, no elapsed
      line, no prev/next and no Lab N of M. Just the mode, a much
      bigger countdown, a progress bar, Pause and Finish. Finishing
-     (or a Layered countdown reaching zero) shows only "Finished"
+     (or a Freeform countdown reaching zero) shows only "Finished"
      and a way back — no note box, no log, nothing saved. */
   if (session.plain) {
     var ph = '<div class="session-inner">';
@@ -4014,7 +4122,7 @@ function renderSession() {
       ph += '<div class="plain-stage">';
       if (mode === "rounds") ph += '<p class="kicker accent" style="font-size:12px;margin:0 0 14px;">Round ' + session.roundNumber + ' <span class="dim">· ' + run.roundSeconds + 's rounds</span></p>';
       else if (mode === "inturn") ph += '<p class="kicker accent" style="font-size:12px;margin:0 0 14px;">In turn <span class="dim">· ' + run.inTurnSeconds + 's each</span></p>';
-      else ph += '<p class="kicker accent" style="font-size:12px;margin:0 0 14px;">Layered <span class="dim">· ' + run.togetherMinutes + ' min</span></p>';
+      else ph += '<p class="kicker accent" style="font-size:12px;margin:0 0 14px;">Freeform <span class="dim">· ' + run.togetherMinutes + ' min</span></p>';
       ph += '<p class="fd plain-clock" id="s-clock" aria-label="' + esc(fmtClock(session.remaining)) + ' remaining">' + esc(fmtClock(session.remaining)) + "</p>";
       ph += '<div class="bar session-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(progress) + '" aria-label="Time through this timer"><i id="s-bar" style="width:' + progress + '%"></i></div>';
       if (mode === "rounds") {
@@ -4141,7 +4249,7 @@ function renderSession() {
     h += '<div class="stage-dots mt3" id="s-dots" aria-hidden="true">' + dots + "</div>";
     h += "</div>";
   } else if (mode === "together") {
-    h += '<p class="kicker accent" style="font-size:12px;margin:0;">Layered <span class="dim">· ' + run.togetherMinutes + " min</span></p>";
+    h += '<p class="kicker accent" style="font-size:12px;margin:0;">Freeform <span class="dim">· ' + run.togetherMinutes + " min</span></p>";
     h += '<div class="session-items mt4">';
     items.forEach(function (it, ii) {
       h += '<div><p class="kicker dim" style="margin:0;">' + sessionLabelHTML(it, ii) + '</p><p class="fd session-item"' + sessionItemAttrs(it) + ">" + esc(it.item) + "</p></div>";
@@ -4739,7 +4847,7 @@ function renderLabsBlooms() {
     if (!editing) {
       h += '<div class="row" style="justify-content:space-between;align-items:flex-start;">';
       h += '<h3 class="fd" style="font-size:16px;font-weight:900;margin:0;padding-top:8px;overflow-wrap:break-word;">' + esc(name) + "</h3>";
-      h += '<button type="button" class="iconbtn iconbtn-s" data-bloom-edit="' + esc(bloom.id) + '" title="Edit" aria-label="Edit bloom ' + esc(name) + '">' + icon("pencil", 20) + "</button>";
+      h += '<button type="button" class="iconbtn" data-bloom-edit="' + esc(bloom.id) + '" title="Edit" aria-label="Edit bloom ' + esc(name) + '">' + icon("pencil", 20) + "</button>";
       h += "</div>";
       if (bloom.createdAt) {
         h += '<p class="dim small" style="margin:2px 0 0;">' + esc(new Date(bloom.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })) + "</p>";
@@ -4754,8 +4862,8 @@ function renderLabsBlooms() {
         h += "</span></button>";
       }
       h += '<div class="lab-actions" style="align-items:center;">';
-      h += '<button type="button" class="iconbtn iconbtn-s" data-bloom-del="' + esc(bloom.id) + '" title="Delete" aria-label="Delete bloom ' + esc(name) + '">' + icon("trash", 20) + "</button>";
-      h += '<button type="button" class="btn btn-s btn-accent" data-bloom-load="' + esc(bloom.id) + '" style="margin-left:auto;">' + icon("play", 20) + " Load in Conductor</button>";
+      h += '<button type="button" class="iconbtn" data-bloom-del="' + esc(bloom.id) + '" title="Delete" aria-label="Delete bloom ' + esc(name) + '">' + icon("trash", 20) + "</button>";
+      h += '<button type="button" class="btn btn-accent" data-bloom-load="' + esc(bloom.id) + '" style="margin-left:auto;padding:0 12px;">' + icon("play", 20) + " Load in Conductor</button>";
       h += "</div>";
     } else {
       var draft = state.bloomDraftWords || [];
@@ -4795,10 +4903,10 @@ function renderLabsBlooms() {
       } else {
         h += '<select class="field" id="labs-bloom-add-item" disabled><option value="">Word…</option></select>';
       }
-      h += '<button type="button" class="btn btn-s" id="labs-bloom-add-btn">' + icon("plus", 14) + " Add word</button>";
+      h += '<button type="button" class="btn" id="labs-bloom-add-btn">' + icon("plus", 14) + " Add word</button>";
       h += "</div>";
       if (addCat) {
-        h += '<button type="button" class="btn btn-s mt2" id="labs-bloom-add-all">Add all of ' + esc(addCat.name) + "</button>";
+        h += '<button type="button" class="btn mt2" id="labs-bloom-add-all">Add all of ' + esc(addCat.name) + "</button>";
       }
       h += '<div class="mt3" style="display:flex;gap:8px;">';
       h += '<button type="button" class="btn-lg btn-lg-volt btn-lg-pair" id="labs-bloom-save" style="flex:1;">' + icon("check", 20) + " Save bloom</button>";
@@ -5713,7 +5821,7 @@ function tagEditorHTML(id) {
   var suggestions = suggestKeywords(ed.getText(), vocabList(), tags);
   if (suggestions.length > 0) {
     h += '<div class="mt3"><p class="kicker dim" style="margin:0;">Found in this note — tap to add</p>';
-    h += '<div class="row wrap" style="gap:6px;">';
+    h += '<div class="row wrap" style="gap:6px;margin-top:8px;">';
     suggestions.forEach(function (item) {
       h += '<button type="button" class="suggchip" data-tesugg="' + esc(item) + '" aria-label="Add suggested tag ' + esc(item) + '">' + icon("plus", 12) + esc(item) + "</button>";
     });
@@ -6115,11 +6223,13 @@ function renderNoteWriter(el) {
   /* Room so the tags box can scroll fully clear of the pinned save bar. */
   h += '<div style="height:176px;" aria-hidden="true"></div>';
   /* Save actions — pinned just above the bottom tab bar at the
-     standard 48px large-button size. Labels never wrap: the longer
-     one keeps the width it needs, the shorter fills what's left. */
+     standard 48px large-button size. Save note sits on the RIGHT
+     (batch .45): Save & add another leads on the left at the
+     width its label needs (the batch .32 floor applies to it
+     alone), and Save note fills what's left. Labels never wrap. */
   h += '<div id="note-savebar"><div class="inner">';
-  h += '<button type="button" class="btn-lg btn-lg-primary" id="writer-save" style="flex:1 1 auto;" aria-label="Save note and back to the list">Save note</button>';
   h += '<button type="button" class="btn-lg btn-lg-ghost" id="writer-save-another" style="flex:0 0 auto;" aria-label="Save note and write another">Save &amp; add another</button>';
+  h += '<button type="button" class="btn-lg btn-lg-primary" id="writer-save" style="flex:1 1 auto;" aria-label="Save note and back to the list">Save note</button>';
   h += "</div></div>";
   el.innerHTML = h;
   var host = el.querySelector('[data-taged-host="new-note"]');
@@ -6245,7 +6355,7 @@ function renderNoteDetail(el) {
     /* X cancel on the left, "Save note" at the standard size on the right. */
     h += '<div class="row mt3" style="justify-content:space-between;">';
     h += '<button type="button" class="iconbtn" id="edit-cancel" aria-label="Cancel editing note text">' + icon("x", 20) + "</button>";
-    h += '<button type="button" class="btn-lg btn-lg-volt" id="edit-save" aria-label="Save note">Save note</button>';
+    h += '<button type="button" class="btn-lg btn-lg-primary" id="edit-save" aria-label="Save note">Save note</button>';
     h += "</div></div>";
   } else {
     /* The note itself is the page's focal point: large text, compact
@@ -6260,10 +6370,13 @@ function renderNoteDetail(el) {
   h += '<p class="card-head">' + icon("tag", 16) + "<span>Tags</span></p>";
   h += '<div class="mt2"><div data-taged-host="note-detail"></div></div></div>';
   /* Attach a lab: when empty it's just the title plus a button that
-     opens the lab dropdown. */
+     opens the lab dropdown. Its head carries the beaker — this box
+     LINKS an existing lab to the note. Making a new lab FROM the
+     note is a different operation and lives in its own box below
+     (batch .44). */
   h += '<div class="card mt3" style="padding:12px 14px;">';
   h += '<div class="row" style="justify-content:space-between;">';
-  h += '<p class="card-head">' + icon("bookmark", 16) + "<span>Attach a lab</span></p>";
+  h += '<p class="card-head">' + icon("flask", 16) + "<span>Attach a lab</span></p>";
   if (unattachedLabs.length > 0) {
     h += '<button type="button" class="slot-act volt" id="note-labpick-toggle" aria-expanded="' + (state.noteLabPickOpen ? "true" : "false") + '" aria-label="' + (state.noteLabPickOpen ? "Close the lab picker" : "Attach a lab to this note — pick one") + '">' + (state.noteLabPickOpen ? icon("x", 20) : icon("plus", 20)) + "</button>";
   }
@@ -6285,13 +6398,19 @@ function renderNoteDetail(el) {
     });
     h += '</select><button type="button" class="btn btn-volt" id="note-lab-attach" style="padding:7px 16px;flex:none;" disabled>Attach</button></div>';
   }
-  /* One compact row: the button at the standard size, its one-line
-     explanation beside it — not a full-width pill with a paragraph
-     under it. The lab is the note itself: no tags needed, and its
-     text is what shows up in Labs and the Timer. Editing the note
-     updates the lab. */
+  h += "</div>";
+  /* Save as lab — its OWN box (batch .44): where Attach a lab links
+     an existing lab to this note, this CREATES a brand-new lab
+     whose drill is the note itself. One compact row inside: the
+     button at the standard size, its one-line explanation beside
+     it — not a full-width pill with a paragraph under it. No tags
+     needed, and the note's text is what shows up in Labs and the
+     Timer. Editing the note updates the lab; deleting or splitting
+     the note removes it. */
+  h += '<div class="card mt3" style="padding:12px 14px;">';
+  h += '<p class="card-head">' + icon("bookmark", 16) + "<span>Save as lab</span></p>";
   var existingNoteLab = findNoteLab(key);
-  h += '<div class="row mt3" style="gap:10px;">';
+  h += '<div class="row mt2" style="gap:10px;">';
   if (existingNoteLab) {
     h += '<span class="btn" aria-disabled="true" style="flex:none;color:var(--volt);border-color:rgba(255,210,63,0.6);border-radius:8px;">' + icon("check", 16) + " Saved as lab</span>";
     h += '<p class="dim small" style="margin:0;">This note is a lab — find it in Labs and in the Timer’s Add lab list. Editing the note updates it.</p>';
@@ -6302,19 +6421,26 @@ function renderNoteDetail(el) {
   h += "</div>";
   h += "</div>";
   if (initialChunks(note.body).length > 1) {
-    h += '<button type="button" class="btn-lg btn-lg-ghost mt4" id="note-split-btn" aria-label="Split this note into smaller notes">Split into smaller notes</button>';
+    h += '<button type="button" class="btn-lg btn-lg-volt mt4" id="note-split-btn" aria-label="Split this note into smaller notes">Split into smaller notes</button>';
   }
   if (note.userId !== null) {
     h += '<div class="mt3"><button type="button" class="btn" id="note-delete-btn" aria-label="Delete this note" style="padding:7px 16px;color:var(--dim);">' + icon("trash", 16) + " Delete note</button></div>";
   }
   if (prev || next) {
-    h += '<div class="row" style="justify-content:space-between;margin-top:28px;gap:12px;">';
+    /* Prev / next share the row as equal flex halves (batch .44):
+       each pill can shrink (flex 1 1 0, min-width 0) and its title
+       ellipsises inside the pill, so the pair always fits the page
+       — before, two content-width pills side by side were wider
+       than a phone screen and the next pill ran off the right
+       edge, clipped mid-title. A lone pill keeps its half, with a
+       flex spacer where its partner would be. */
+    h += '<div class="row" style="margin-top:28px;gap:8px;">';
     h += prev
-      ? '<button type="button" class="btn" data-note-nav="' + esc(prev.key) + '" aria-label="Previous note: ' + esc(prev.title) + '" style="padding:7px 14px;background:var(--surface);">' + icon("chevL", 18) + '<span style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(prev.title) + "</span></button>"
-      : "<span></span>";
+      ? '<button type="button" class="btn" data-note-nav="' + esc(prev.key) + '" aria-label="Previous note: ' + esc(prev.title) + '" style="flex:1 1 0;min-width:0;padding:7px 14px;background:var(--surface);">' + icon("chevL", 18) + '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;">' + esc(prev.title) + "</span></button>"
+      : '<span style="flex:1 1 0;" aria-hidden="true"></span>';
     h += next
-      ? '<button type="button" class="btn" data-note-nav="' + esc(next.key) + '" aria-label="Next note: ' + esc(next.title) + '" style="padding:7px 14px;background:var(--surface);"><span style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(next.title) + "</span>" + icon("chevR", 18) + "</button>"
-      : "<span></span>";
+      ? '<button type="button" class="btn" data-note-nav="' + esc(next.key) + '" aria-label="Next note: ' + esc(next.title) + '" style="flex:1 1 0;min-width:0;padding:7px 14px;background:var(--surface);"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;">' + esc(next.title) + "</span>" + icon("chevR", 18) + "</button>"
+      : '<span style="flex:1 1 0;" aria-hidden="true"></span>';
     h += "</div>";
   }
   el.innerHTML = h;
@@ -6486,7 +6612,7 @@ function renderNoteSplit(el) {
      down to a single piece is how parts of a note get deleted, so
      the button stays live at one piece and reads as a save. */
   var splitOne = live.length === 1;
-  h += '<button type="button" class="btn-lg btn-lg-primary mt4" id="split-confirm" style="width:100%;"' + (live.length < 1 ? " disabled" : "") + ' aria-label="' + (splitOne ? "Save the note as this one piece, dropping the rest" : "Split this note into " + live.length + " notes") + '">' + (splitOne ? "Save as 1 note" : "Split into " + live.length + " notes") + "</button>";
+  h += '<button type="button" class="btn-lg btn-lg-volt mt4" id="split-confirm" style="width:100%;"' + (live.length < 1 ? " disabled" : "") + ' aria-label="' + (splitOne ? "Save the note as this one piece, dropping the rest" : "Split this note into " + live.length + " notes") + '">' + (splitOne ? "Save as 1 note" : "Split into " + live.length + " notes") + "</button>";
   h += '<button type="button" class="btn-lg btn-lg-ghost mt2" id="split-cancel" style="width:100%;" aria-label="Cancel splitting">Cancel</button>';
   el.innerHTML = h;
   document.getElementById("split-back").addEventListener("click", function () { state.noteSplitting = false; renderNotes(); });
@@ -6603,7 +6729,7 @@ function renderCategoriesScreen() {
   h += '<p class="small mt1" id="cat-clash" style="color:var(--dim);margin-bottom:0;" hidden></p>';
   h += '<label class="flabel" for="cat-item" style="margin-top:16px;">Items <span style="text-transform:none;letter-spacing:0;font-weight:400;">(optional — add more later)</span></label>';
   if (catDraftItems.length > 0) {
-    h += '<div class="row wrap" style="gap:6px;">';
+    h += '<div class="row wrap cat-draft-chips" style="gap:6px;">';
     catDraftItems.forEach(function (it) {
       h += '<span class="tagchip">' + esc(it) + '<button type="button" class="xbtn" data-cat-del-item="' + esc(it) + '" aria-label="Remove item ' + esc(it) + ' from the new category">' + icon("x", 12) + "</button></span>";
     });
@@ -6611,8 +6737,10 @@ function renderCategoriesScreen() {
   }
   h += '<div class="row"><input class="field grow" id="cat-item" placeholder="An item for this category…" autocomplete="off" maxlength="80" />';
   h += '<button type="button" class="btn btn-volt" id="cat-add-item" style="padding:7px 14px;flex:none;">Add</button></div>';
-  /* The form's buttons use the app's standard large-button styles. */
-  h += '<div class="mt4" style="display:flex;gap:8px;"><button type="button" class="btn-lg btn-lg-volt btn-lg-pair" id="cat-create" style="flex:0 0 auto;">Create category</button>';
+  /* The form's buttons use the app's standard large-button styles.
+     The pair rides .cat-pair (batch .45): Create fits its content,
+     Cancel fills the rest, neither carries the half-width floor. */
+  h += '<div class="mt4 cat-pair" style="display:flex;gap:8px;"><button type="button" class="btn-lg btn-lg-volt btn-lg-pair" id="cat-create" style="flex:0 0 auto;">Create category</button>';
   h += '<button type="button" class="btn-lg btn-lg-ghost btn-lg-pair" id="cat-cancel" style="flex:1;">Cancel</button></div>';
   h += "</section>";
   /* Your categories: each row expands to show its items. The + on a
@@ -6668,7 +6796,19 @@ function renderCategoriesScreen() {
   h += "</div>";
   el.innerHTML = h;
   document.getElementById("cat-back").addEventListener("click", closeCategoriesScreen);
-  document.getElementById("cat-cancel").addEventListener("click", closeCategoriesScreen);
+  /* Cancel only clears the New Category form (batch .45) — the
+     name, the item being typed, the draft item chips and any open
+     add-item state — and stays on this screen; Back is the way
+     out. The re-render rebuilds every field from the cleared
+     drafts, so the clash note goes with them. */
+  document.getElementById("cat-cancel").addEventListener("click", function () {
+    catDraftName = "";
+    catDraftItems = [];
+    catAddingTo = null;
+    catAddDraft = "";
+    catSel = null;
+    renderCategoriesScreen();
+  });
   var itemInp = document.getElementById("cat-item");
   function addItem() {
     var v = itemInp.value.trim();
@@ -7278,16 +7418,18 @@ function renderStyleGuide() {
   b += mapRow("Note text \u00b7 .note-pre, .note-body-input", "18px", "reading view and editor share the one font rule");
   b += mapRow("Overlay fill \u00b7 toast, .modal-card, .tag-drop, .conductor-panel", "one fill", "the flat --overlay background, no border, no shadow");
   b += mapRow("Modal chrome \u00b7 #modal-root, note composer, builder + plain-timer modals", "one backdrop", "each modal keeps only its alignment, tint and z-index");
+  b += mapRow("Modal max height \u00b7 .modal-card, .builder-card, .party-sheet", "one cap", "--modal-max-h (viewport \u2212 tab bar \u2212 24px): no modal exceeds the viewport; tall middles scroll inside their card");
   b += mapRow("Switch shell + segments \u00b7 .conductor-switch, .mode-switch", "32px / 24px", "one pill shell, one 24px segment rule");
   b += '<p class="sg-label" style="margin-top:6px;">Buttons \u00b7 S 24px / font 12 / icon 12 \u00b7 M 32px / font 13 / icon 12 \u00b7 L 48px / font 14 / icon 20</p>';
   b += mapRow("Button M \u00b7 .btn", "M", "the coloured variants (.btn-accent, .btn-volt, .btn-outline-accent) share one Archivo caps treatment and differ only in colour");
   b += mapRow("Button S \u00b7 .btn.btn-s", "S", "card Notes toggle + Add note, bloom actions, split actions, Notes Clear");
   b += mapRow("Button L \u00b7 .btn-lg + session .transport", "L", "one shared 48px Archivo pill + icon rule; the variants and .transport keep only their colours");
+  b += mapRow("Button padding floor \u00b7 .btn (not .btn-s), Timer-footer .btn-lg", "16px sides", "one shared minimum horizontal padding, so no button label crowds its edges; pair members keep their pair padding");
   b += mapRow("Timer-footer segment", "L", "48px / font 14 / icon 20; its time chips are Chip S");
   b += '<p class="sg-label" style="margin-top:6px;">Icon buttons \u00b7 S 24\u00d724 / icon 12 \u00b7 M 32\u00d732 / icon 16 \u00b7 L 48\u00d748 / icon 24</p>';
   b += mapRow("Icon M \u00b7 .iconbtn, .slot-act, .stepper, .conductor-edit", "M", "one shared 32px geometry + 16px icon rule; each keeps only its fill, colour and extras");
-  b += mapRow("Icon S \u00b7 .iconbtn-s, .cat-mini, .search-clear", "S", "one shared 24px geometry + 12px icon rule — bloom cards, detach, saved-bloom delete, and the session's per-slot re-roll (.session-reroll)");
-  b += mapRow("Icon L \u00b7 .skipbtn, .party-play", "L", "one shared 48px geometry + 24px icon rule; each keeps only its fill");
+  b += mapRow("Icon S \u00b7 .iconbtn-s, .cat-mini, .search-clear", "S", "one shared 24px geometry + 12px icon rule — detach, saved-bloom delete, and the session's per-slot re-roll (.session-reroll)");
+  b += mapRow("Icon L \u00b7 .skipbtn, .party-play, .iconbtn-l", "L", "one shared 48px geometry + 24px icon rule; each keeps only its fill");
   b += '<p class="sg-label" style="margin-top:6px;">Chips, pills & tags \u00b7 S 24px / font 12 \u00b7 M 32px</p>';
   b += mapRow("Chip S \u00b7 .minchip, .tagchip, .suggchip, .pairchip, .cat-item-box", "S", "one shared 24px pill rule — one 12px icon size, one 4px icon gap, one padding, one .xbtn remove for tag and pair chips; each keeps only its border, fill and colour (item boxes keep a 6px radius and their padding)");
   b += mapRow("Chip M height \u00b7 .jumpchip, .def-item", "M", "32px at font 12, on the shared pill base");
@@ -7295,10 +7437,9 @@ function renderStyleGuide() {
   b += '<p class="sg-label" style="margin-top:6px;">Fields, cards & type</p>';
   b += mapRow("Text fields + selects \u00b7 .field, .tag-input, menu rows", "36px", "font 16 \u2014 no iOS zoom on tap; a field height, not a button tier");
   b += mapRow("Search field \u00b7 .search-input", "42px", "the one field exception to the 36px height");
-  b += mapRow("Party dance select", "32px", "font 13, to match its 32px top bar");
+  b += mapRow("Party dance select + info button", "48px", "font 14 — the top bar rides the L tier (select 48px, info on .iconbtn-l)");
   b += mapRow("Field title gap \u00b7 label rules", "8px", "the label sits 8px above its field");
-  b += mapRow("Lab cards \u00b7 .is-lab, Conductor preset cards \u00b7 .is-cond", "M", "their buttons + icon buttons ride Button / Icon M");
-  b += mapRow("Bloom cards \u00b7 .is-bloom", "S", "their buttons + icon buttons ride Button / Icon S");
+  b += mapRow("Labs-list cards \u00b7 .is-lab, .is-cond, .is-bloom", "M", "one card block for every kind \u2014 labs, note labs, Conductor presets and Word blooms; buttons + icon buttons ride Button / Icon M, only the content differs");
   b += mapRow("Page titles, modal + builder titles", "24px");
   b += mapRow("Section titles \u00b7 h2.sec, card heads \u00b7 .card-head (icon 16)", "16px");
   b += mapRow("Body text", "14px");
@@ -7322,7 +7463,6 @@ function renderStyleGuide() {
     '<button type="button" class="btn btn-accent" style="padding:7px 14px;">' + icon("play", 20) + " Practice</button>" +
     '<button type="button" class="btn btn-accent" style="margin-left:0;padding:7px 14px;">' + icon("play", 20) + " Load in Conductor</button>"));
   b += item("Volt button \u00b7 .btn.btn-volt", rowOf(
-    '<button type="button" class="btn btn-volt" style="padding:7px 16px;">' + icon("play", 16) + " Practice</button>" +
     '<button type="button" class="btn btn-volt">' + icon("bookmark", 16) + " Save as lab</button>" +
     '<button type="button" class="btn btn-s btn-volt">Load</button>'));
   b += item("Volt button \u00b7 .btn.btn-volt (small form size)", rowOf(
@@ -7336,9 +7476,8 @@ function renderStyleGuide() {
     '<button type="button" class="btn fd" style="padding:7px 18px;font-weight:700;text-transform:uppercase;background:var(--surface);">' + icon("chevL", 20) + " Back</button>"));
   b += item("Delete note \u00b7 .btn, dim text", rowOf(
     '<button type="button" class="btn" style="padding:7px 16px;color:var(--dim);">' + icon("trash", 16) + " Delete note</button>"));
-  b += item("Note prev / next \u00b7 .btn with truncated title", rowOf(
-    '<button type="button" class="btn" style="padding:7px 14px;background:var(--surface);">' + icon("chevL", 18) + '<span style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Leading head snaking</span></button>' +
-    '<button type="button" class="btn" style="padding:7px 14px;background:var(--surface);"><span style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Alphabet game</span>' + icon("chevR", 18) + "</button>"));
+  b += item("Note prev / next \u00b7 .btn flex halves, titles truncate inside", '<div class="row" style="gap:8px;"><button type="button" class="btn" style="flex:1 1 0;min-width:0;padding:7px 14px;background:var(--surface);">' + icon("chevL", 18) + '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;">Leading head snaking</span></button>' +
+    '<button type="button" class="btn" style="flex:1 1 0;min-width:0;padding:7px 14px;background:var(--surface);"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;">Alphabet game</span>' + icon("chevR", 18) + "</button></div>", "the pair always fits the page ' + D + ' each pill shrinks and its title ellipsises inside it");
   b += item("Attach / detach toggle row \u00b7 .btn full-width (notes on this lab, in Edit lab)", '<button type="button" class="btn" aria-pressed="true" style="display:flex;width:100%;justify-content:space-between;gap:8px;text-align:left;margin-top:0;padding:7px 12px;border-radius:8px;border-color:rgba(255,210,63,0.6);background:rgba(255,210,63,0.1);color:var(--volt);"><span style="min-width:0;overflow-wrap:break-word;">Reach through the arm <span class="dim" style="font-weight:400;">\u00b7 Waving &amp; Liquid</span></span>' + icon("check", 16) + "</button>");
   b += item("Split piece actions \u00b7 .btn small bold", rowOf(
     '<button type="button" class="btn btn-s" style="font-weight:700;">Split by line</button>' +
@@ -7354,7 +7493,7 @@ function renderStyleGuide() {
     '<button type="button" class="btn-lg btn-lg-primary">Save note</button>'));
   b += item("Large volt \u00b7 .btn-lg.btn-lg-volt", rowOf(
     '<button type="button" class="btn-lg btn-lg-volt">' + icon("bookmark", 20) + " Save lab</button>" +
-    '<button type="button" class="btn-lg btn-lg-volt">Save note</button>' +
+    '<button type="button" class="btn-lg btn-lg-volt">Save bloom</button>' +
     '<button type="button" class="btn-lg btn-lg-volt">' + icon("note", 20) + " Save session note</button>"));
   b += item("Large ghost \u00b7 .btn-lg.btn-lg-ghost", rowOf(
     '<button type="button" class="btn-lg btn-lg-ghost">Cancel</button>' +
@@ -7362,9 +7501,10 @@ function renderStyleGuide() {
   b += item("Large outline volt \u00b7 .btn-lg.btn-lg-outline-volt (Add lab, Timer footer)", rowOf(
     '<button type="button" class="btn-lg btn-lg-outline-volt">' + icon("plus", 20) + " Add lab</button>"));
   b += item("Pair \u00b7 Save lab fills, Send to Timer fits (.labs-pair \u00b7 .btn-lg-pair)", '<div class="labs-pair" style="display:flex;gap:8px;"><button type="button" class="btn-lg btn-lg-volt btn-lg-pair" style="flex:1;">' + icon("bookmark", 20) + ' Save lab</button><button type="button" class="btn-lg btn-lg-primary btn-lg-pair" style="flex:0 0 auto;">' + icon("timer", 20) + " Send to Timer</button></div>", "no half-width floor on either member (batch .43), so Send keeps its full label and Save takes what is left \u2014 the pair always stays inside its card");
+  b += item("Pair \u00b7 Create category fits, Cancel fills (.cat-pair \u00b7 .btn-lg-pair)", '<div class="cat-pair" style="display:flex;gap:8px;"><button type="button" class="btn-lg btn-lg-volt btn-lg-pair" style="flex:0 0 auto;">Create category</button><button type="button" class="btn-lg btn-lg-ghost btn-lg-pair" style="flex:1;">Cancel</button></div>', "the same no-floor pattern (batch .45): Create takes its label\u2019s width, Cancel fills the rest \u2014 the pair stays inside the New Category card; on the Categories screen, Cancel only clears the form and stays put");
   b += item("Pair \u00b7 already queued state (span, not a button)", '<div class="labs-pair" style="display:flex;gap:8px;"><button type="button" class="btn-lg btn-lg-volt btn-lg-pair" style="flex:1;">' + icon("bookmark", 20) + ' Save lab</button><span class="btn-lg btn-lg-pair" aria-disabled="true" style="flex:0 0 auto;color:var(--volt);border:1px solid var(--volt);">' + icon("check", 20) + " In the Timer</span></div>");
   b += item("Pair \u00b7 modal foot (Cancel / confirm, equal halves)", '<div style="display:flex;gap:8px;"><button type="button" class="btn-lg btn-lg-ghost" style="flex:1;">Cancel</button><button type="button" class="btn-lg btn-lg-primary" style="flex:1;">' + icon("plus", 20) + " Add to Today</button></div>");
-  b += item("Full width \u00b7 Split confirm / cancel, Cancel edit", '<div style="display:grid;gap:8px;"><button type="button" class="btn-lg btn-lg-primary" style="width:100%;">Split into 3 notes</button><button type="button" class="btn-lg btn-lg-ghost" style="width:100%;">Cancel</button><button type="button" class="btn-lg btn-lg-ghost" style="width:100%;">Cancel edit</button></div>');
+  b += item("Full width \u00b7 Split confirm / cancel, Cancel edit", '<div style="display:grid;gap:8px;"><button type="button" class="btn-lg btn-lg-volt" style="width:100%;">Split into 3 notes</button><button type="button" class="btn-lg btn-lg-ghost" style="width:100%;">Cancel</button><button type="button" class="btn-lg btn-lg-ghost" style="width:100%;">Cancel edit</button></div>');
   b += item("Large button \u00b7 disabled state", rowOf('<button type="button" class="btn-lg btn-lg-primary" disabled>Start</button>'));
   b += item("Footer CTA states \u00b7 Start timer (empty Today) / Start \u00b7 N labs", rowOf(
     '<button type="button" class="btn-lg btn-lg-primary">' + icon("play", 20) + " Start timer</button>" +
@@ -7381,7 +7521,7 @@ function renderStyleGuide() {
     '<button type="button" class="iconbtn" aria-label="Close">' + icon("x", 20) + "</button>"));
   b += item("Icon button S \u00b7 .iconbtn.iconbtn-s (24px, 12px icon)", rowOf(
     '<button type="button" class="iconbtn iconbtn-s" aria-label="Detach lab">' + icon("x", 12) + "</button>" +
-    '<button type="button" class="iconbtn iconbtn-s" aria-label="Delete bloom">' + icon("x", 12) + "</button>"), "the small icon tier \u2014 bloom cards, detach, saved-bloom delete");
+    '<button type="button" class="iconbtn iconbtn-s" aria-label="Delete bloom">' + icon("x", 12) + "</button>"), "the small icon tier \u2014 detach, saved-bloom delete, session re-roll");
   b += item("Slot action \u00b7 .slot-act (32px \u2014 re-roll, remove slot, category row +)", rowOf(
     '<button type="button" class="slot-act" aria-label="Re-roll slot">' + icon("shuffle", 20) + "</button>" +
     '<button type="button" class="slot-act" aria-label="Remove slot">' + icon("x", 20) + "</button>" +
@@ -7438,7 +7578,7 @@ function renderStyleGuide() {
     '<span class="pairchip">Fixed Points</span>' +
     '<span class="pairchip">Traces<button type="button" class="xbtn" aria-label="Remove item">' + icon("x", 12) + "</button></span>"));
   b += item("Run badge \u00b7 .run-badge (a queued lab\u2019s run \u2014 plain orange text, no pill)", rowOf(
-    '<button type="button" class="run-badge">' + icon("timer", 14) + " Layered \u00b7 5 min</button>" +
+    '<button type="button" class="run-badge">' + icon("timer", 14) + " Freeform \u00b7 5 min</button>" +
     '<button type="button" class="run-badge">' + icon("timer", 14) + " Rounds \u00b7 60s</button>"));
   b += item("Jump chip \u00b7 .jumpchip (In turn item jumper)", '<div class="row wrap" style="justify-content:flex-start;gap:6px;"><button type="button" class="jumpchip" data-sg-group aria-current="true">1. Connects</button><button type="button" class="jumpchip" data-sg-group>2. Ooey-Gooey</button></div>', "tap to switch the current item");
   b += item("Lab name line \u00b7 .lab-name-line (volt outline pill)", '<span class="lab-name-line" title="Flexn\u2019 \u00b7 Fixed Points \u00b7 Traces \u00b7 Random Texture">Flexn\u2019 \u00b7 Fixed Points \u00b7 Traces \u00b7 Random Texture</span>', "a long name ellipsises inside the pill \u2014 it never runs past the right edge");
@@ -7456,8 +7596,8 @@ function renderStyleGuide() {
   b += item("Lab card, notes open \u00b7 Add note + .lab-note-box rows", '<div><button type="button" class="btn btn-s" style="border-color:rgba(255,210,63,0.6);color:var(--volt);font-weight:700;">' + icon("note", 16) + ' Add note</button><div class="mt2"><button type="button" class="lab-note-box"><span style="min-width:0;"><span class="t">Reach through the arm, not just wave</span></span>' + icon("chevR", 16) + "</button></div></div>");
   b += item("Note lab card \u00b7 .card.lab-card with NOTE LAB kicker and excerpt", '<article class="card lab-card is-lab" aria-label="Note lab specimen"><div class="row" style="justify-content:space-between;align-items:flex-start;"><h3 class="fd" style="font-size:16px;font-weight:900;margin:0;padding-top:8px;overflow-wrap:break-word;">Sample note \u2014 a note lab</h3><button type="button" class="iconbtn" aria-label="Open note specimen">' + icon("note", 20) + '</button></div><p class="kicker volt" style="margin:8px 0 0;">Note lab</p><p class="note-excerpt" style="margin-top:4px;">This note is also a lab. It sits in your labs as a note \u2014 its text is the drill.</p><div class="lab-actions" style="align-items:center;"><button type="button" class="iconbtn" aria-label="Delete specimen">' + icon("trash", 20) + '</button><button type="button" class="btn btn-accent" style="margin-left:auto;padding:0 12px;">' + icon("play", 20) + " Practice</button></div></article>", "no Duplicate on a note lab");
   b += item("Conductor preset card \u00b7 .card.lab-card.is-cond with .cond-kind + .cond-summary", '<article class="card lab-card is-cond" aria-label="Preset specimen"><div class="row" style="justify-content:space-between;align-items:flex-start;"><h3 class="fd" style="font-size:16px;font-weight:900;margin:0;padding-top:8px;overflow-wrap:break-word;">Slow square drift</h3><button type="button" class="iconbtn" aria-label="Rename specimen">' + icon("pencil", 20) + '</button></div><p class="dim small" style="margin:2px 0 0;">Nov 11</p><p style="margin:8px 0 0;"><span class="cond-kind">Four points</span></p><p class="cond-summary">Trails \u00b7 4 points \u00b7 Square grid 4 \u00d7 6 \u00b7 Ripples medium \u00b7 Rest 0.5s \u00b7 Speed 1x</p><div class="lab-actions" style="align-items:center;"><button type="button" class="iconbtn" aria-label="Delete specimen">' + icon("trash", 20) + '</button><button type="button" class="btn btn-accent" style="margin-left:auto;padding:0 12px;">' + icon("play", 20) + " Load in Conductor</button></div></article>");
-  b += item("Bloom card \u00b7 .card.lab-card with .bloom-preview", '<article class="card lab-card is-bloom" aria-label="Bloom specimen"><div class="row" style="justify-content:space-between;align-items:flex-start;"><h3 class="fd" style="font-size:16px;font-weight:900;margin:0;padding-top:8px;overflow-wrap:break-word;">Traces \u00b7 Waving \u00b7 Liquid</h3><button type="button" class="iconbtn iconbtn-s" aria-label="Edit bloom specimen">' + icon("pencil", 20) + '</button></div><p class="dim small" style="margin:2px 0 0;">Nov 11</p><p style="margin:8px 0 0;"><span class="cond-kind">Word bloom</span></p><p class="dim small" style="margin:6px 0 0;">8 words \u00b7 3 on screen \u00b7 6s life \u00b7 1.3\u00d7 \u00b7 steady</p><span class="bloom-preview">Traces \u00b7 Waving \u00b7 Liquid \u00b7 Threads \u00b7 Arms <span class="dim">+3 more</span></span><div class="lab-actions" style="align-items:center;"><button type="button" class="iconbtn iconbtn-s" aria-label="Delete specimen">' + icon("trash", 20) + '</button><button type="button" class="btn btn-s btn-accent" style="margin-left:auto;">' + icon("play", 20) + " Load in Conductor</button></div></article>");
-  b += item("Bloom card, editing \u00b7 name field, word chips, add row, save pair", '<article class="card lab-card" aria-label="Bloom edit specimen"><h3 class="fd" style="font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.03em;margin:0;">Edit bloom</h3><div class="row mt2"><input class="field grow" placeholder="Bloom name" value="Traces bloom" aria-label="Bloom name specimen" /></div><p class="dim small" style="margin:8px 0 0;">2 words \u2014 tap a word\u2019s \u00d7 to take it out.</p><div class="bloom-edit-words"><span class="tagchip" title="Concept">Traces<button type="button" class="xbtn" aria-label="Remove Traces">' + icon("x", 12) + '</button></span><span class="tagchip" title="Style">Waving<button type="button" class="xbtn" aria-label="Remove Waving">' + icon("x", 12) + '</button></span></div><div class="bloom-add-row"><select class="field" aria-label="Category specimen"><option>Concept</option></select><select class="field" aria-label="Word specimen"><option>Threads</option></select><button type="button" class="btn btn-s">' + icon("plus", 14) + ' Add word</button></div><button type="button" class="btn btn-s mt2">Add all of Concept</button><div class="mt3" style="display:flex;gap:8px;"><button type="button" class="btn-lg btn-lg-volt btn-lg-pair" style="flex:1;">' + icon("check", 20) + ' Save bloom</button><button type="button" class="btn-lg btn-lg-ghost btn-lg-pair" style="flex:1;">Cancel</button></div></article>');
+  b += item("Bloom card \u00b7 .card.lab-card with .bloom-preview", '<article class="card lab-card is-bloom" aria-label="Bloom specimen"><div class="row" style="justify-content:space-between;align-items:flex-start;"><h3 class="fd" style="font-size:16px;font-weight:900;margin:0;padding-top:8px;overflow-wrap:break-word;">Traces \u00b7 Waving \u00b7 Liquid</h3><button type="button" class="iconbtn" aria-label="Edit bloom specimen">' + icon("pencil", 20) + '</button></div><p class="dim small" style="margin:2px 0 0;">Nov 11</p><p style="margin:8px 0 0;"><span class="cond-kind">Word bloom</span></p><p class="dim small" style="margin:6px 0 0;">8 words \u00b7 3 on screen \u00b7 6s life \u00b7 1.3\u00d7 \u00b7 steady</p><span class="bloom-preview">Traces \u00b7 Waving \u00b7 Liquid \u00b7 Threads \u00b7 Arms <span class="dim">+3 more</span></span><div class="lab-actions" style="align-items:center;"><button type="button" class="iconbtn" aria-label="Delete specimen">' + icon("trash", 20) + '</button><button type="button" class="btn btn-accent" style="margin-left:auto;padding:0 12px;">' + icon("play", 20) + " Load in Conductor</button></div></article>");
+  b += item("Bloom card, editing \u00b7 name field, word chips, add row, save pair", '<article class="card lab-card" aria-label="Bloom edit specimen"><h3 class="fd" style="font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.03em;margin:0;">Edit bloom</h3><div class="row mt2"><input class="field grow" placeholder="Bloom name" value="Traces bloom" aria-label="Bloom name specimen" /></div><p class="dim small" style="margin:8px 0 0;">2 words \u2014 tap a word\u2019s \u00d7 to take it out.</p><div class="bloom-edit-words"><span class="tagchip" title="Concept">Traces<button type="button" class="xbtn" aria-label="Remove Traces">' + icon("x", 12) + '</button></span><span class="tagchip" title="Style">Waving<button type="button" class="xbtn" aria-label="Remove Waving">' + icon("x", 12) + '</button></span></div><div class="bloom-add-row"><select class="field" aria-label="Category specimen"><option>Concept</option></select><select class="field" aria-label="Word specimen"><option>Threads</option></select><button type="button" class="btn">' + icon("plus", 14) + ' Add word</button></div><button type="button" class="btn mt2">Add all of Concept</button><div class="mt3" style="display:flex;gap:8px;"><button type="button" class="btn-lg btn-lg-volt btn-lg-pair" style="flex:1;">' + icon("check", 20) + ' Save bloom</button><button type="button" class="btn-lg btn-lg-ghost btn-lg-pair" style="flex:1;">Cancel</button></div></article>');
   b += item("Preset card, renaming \u00b7 name field + save pair", '<article class="card lab-card is-cond" aria-label="Preset rename specimen"><h3 class="fd" style="font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.03em;margin:0;">Rename preset</h3><p style="margin:8px 0 0;"><span class="cond-kind">Shapeshifter</span></p><p class="cond-summary dim">2D + 3D \u00b7 Square, Circle, Triangle, Letter</p><div class="row mt2"><input class="field grow" placeholder="Preset name" value="Slow square drift" aria-label="Preset name specimen" /></div><div class="mt3" style="display:flex;gap:8px;"><button type="button" class="btn-lg btn-lg-volt btn-lg-pair" style="flex:1;">' + icon("check", 20) + ' Save name</button><button type="button" class="btn-lg btn-lg-ghost btn-lg-pair" style="flex:1;">Cancel</button></div></article>');
   b += item("Plain card \u00b7 .card (tags box, panels, split pieces)", '<section class="card" style="padding:12px 14px;"><p class="card-head">' + icon("tag", 16) + "<span>Tags</span></p><p class=\"dim small\" style=\"margin:6px 0 0;\">The generic 12px-radius card under tag editors, filter panels and split pieces.</p></section>");
   b += item("Defaults category card \u00b7 .card.def-cat with .def-cat-head", '<section class="card def-cat" aria-label="Defaults specimen"><label class="def-cat-head"><input type="checkbox" checked aria-label="Include Concept specimen" /><span class="fd grow" style="font-size:16px;font-weight:900;min-width:0;">Concept</span><span class="dim small" style="flex:none;">12 of 14</span></label><div class="def-items"><label class="def-item"><input type="checkbox" checked />Traces</label><label class="def-item off"><input type="checkbox" />Threads</label></div></section>');
@@ -7469,10 +7609,10 @@ function renderStyleGuide() {
   b = "";
   b += item("Note card \u00b7 .note-card with excerpt, chevron and one-line tags", '<div class="note-card"><button type="button" style="display:flex;width:100%;align-items:flex-start;justify-content:space-between;gap:12px;text-align:left;"><span class="note-excerpt">Leading head snaking \u2014 keep the head loose and let it lead the phrase.</span><span class="dim" style="flex:none;margin-top:2px;">' + icon("chevR", 20) + '</span></button><div class="note-card-tags no-scrollbar" role="group"><button type="button" class="tagchip">Snaking</button><button type="button" class="tagchip">Head</button></div></div>', "press shrinks the whole card");
   b += item("Note card \u00b7 no tags", '<div class="note-card"><button type="button" style="display:flex;width:100%;align-items:flex-start;justify-content:space-between;gap:12px;text-align:left;"><span class="note-excerpt">Reach through the arm, not just wave.</span><span class="dim" style="flex:none;margin-top:2px;">' + icon("chevR", 20) + "</span></button></div>");
-  b += item("Queue row \u00b7 .drill-row (Today)", '<div class="drill-row"><span class="fd dim" style="width:20px;flex:none;text-align:center;font-size:14px;font-weight:900;">1</span><span class="grow" style="min-width:0;"><span class="fd" style="display:block;font-size:12px;font-weight:700;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Fixed Points \u00b7 Traces</span><span class="small" style="display:block;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tag);">Fixed Points \u00b7 Traces</span><span style="display:block;margin-top:4px;"><button type="button" class="run-badge">' + icon("timer", 14) + ' Layered \u00b7 5 min</button></span></span><button type="button" class="stepper" disabled aria-label="Move up specimen">' + icon("chevU", 16) + '</button><button type="button" class="stepper" aria-label="Move down specimen">' + icon("chevD", 16) + '</button><button type="button" class="stepper" aria-label="Edit specimen">' + icon("pencil", 16) + '</button><button type="button" class="stepper" aria-label="Remove specimen">' + icon("x", 16) + "</button></div>");
+  b += item("Queue row \u00b7 .drill-row (Today)", '<div class="drill-row"><span class="fd dim" style="width:20px;flex:none;text-align:center;font-size:14px;font-weight:900;">1</span><span class="grow" style="min-width:0;"><span class="fd" style="display:block;font-size:12px;font-weight:700;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Fixed Points \u00b7 Traces</span><span class="small" style="display:block;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tag);">Fixed Points \u00b7 Traces</span><span style="display:block;margin-top:4px;"><button type="button" class="run-badge">' + icon("timer", 14) + ' Freeform \u00b7 5 min</button></span></span><button type="button" class="stepper" disabled aria-label="Move up specimen">' + icon("chevU", 16) + '</button><button type="button" class="stepper" aria-label="Move down specimen">' + icon("chevD", 16) + '</button><button type="button" class="stepper" aria-label="Edit specimen">' + icon("pencil", 16) + '</button><button type="button" class="stepper" aria-label="Remove specimen">' + icon("x", 16) + "</button></div>");
   b += item("Queue row, current \u00b7 .drill-row.current (volt border)", '<div class="drill-row current"><span class="fd dim" style="width:20px;flex:none;text-align:center;font-size:14px;font-weight:900;">2</span><span class="grow" style="min-width:0;"><span class="fd" style="display:block;font-size:12px;font-weight:700;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Traces \u00b7 Arms</span><span class="small" style="display:block;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tag);">Traces \u00b7 Arms</span><span style="display:block;margin-top:4px;"><button type="button" class="run-badge">' + icon("timer", 14) + " In turn \u00b7 30s each</button></span></span></div>");
   b += item("Today total line \u00b7 .today-total", '<div class="today-total" style="margin-top:0;"><span class="big">10 min</span><span class="dim">first pass \u00b7 2 labs</span></div>');
-  b += item("Session log row \u00b7 .log-row (Done screen)", '<div><div class="log-row"><span class="t">Fixed Points \u00b7 Traces</span><span class="m">Layered \u00b7 5 min</span><span class="s">0:19</span></div><div class="log-row"><span class="t">Follow the movement \u00b7 Random Plane</span><span class="m">Rounds \u00b7 60s \u00b7 3 rounds</span><span class="s">3:06</span></div></div>');
+  b += item("Session log row \u00b7 .log-row (Done screen)", '<div><div class="log-row"><span class="t">Fixed Points \u00b7 Traces</span><span class="m">Freeform \u00b7 5 min</span><span class="s">0:19</span></div><div class="log-row"><span class="t">Follow the movement \u00b7 Random Plane</span><span class="m">Rounds \u00b7 60s \u00b7 3 rounds</span><span class="s">3:06</span></div></div>');
   b += item("Attached lab row \u00b7 note detail (name + Icon S detach)", '<div class="row" style="justify-content:space-between;align-items:center;border:1px solid var(--border);background:var(--bg);border-radius:8px;padding:8px 12px;"><span style="flex:1;min-width:0;overflow-wrap:break-word;font-weight:600;">Fixed Points \u00b7 Traces</span><button type="button" class="iconbtn iconbtn-s" aria-label="Detach specimen">' + icon("x", 12) + "</button></div>");
   b += item("Saved bloom row \u00b7 words modal (name + Load + delete)", '<div class="row" style="justify-content:space-between;border:1px solid var(--border);background:var(--bg);border-radius:8px;padding:8px 12px;"><span style="min-width:0;"><span style="display:block;font-weight:600;overflow-wrap:break-word;">Traces bloom</span><span class="dim small" style="display:block;">8 words \u00b7 3 on screen \u00b7 6s life</span></span><span class="row" style="gap:6px;flex:none;"><button type="button" class="btn btn-s btn-volt">Load</button><button type="button" class="iconbtn iconbtn-s" aria-label="Delete bloom specimen">' + icon("x", 12) + "</button></span></div>");
   b += item("Empty states \u00b7 dim paragraphs", '<div style="display:grid;gap:6px;"><p class="dim base" style="margin:0;">Nothing queued yet. Add a lab below \u2014 pick a saved one or build one on the spot.</p><p class="dim base" style="margin:0;">No labs yet \u2014 build one above and save it.</p><p class="dim" style="text-align:center;padding:8px 0;margin:0;">Nothing matches that yet.</p><p class="dim small" style="margin:0;">No notes for this lab yet.</p></div>');
@@ -7507,8 +7647,8 @@ function renderStyleGuide() {
   b = "";
   b += item("Slot \u00b7 .slot with .slot-head and two dropdowns (the picker, exactly as built)", '<div class="slot"><div class="slot-head"><span>Slot 1</span><span class="row" style="gap:6px;"><button type="button" class="slot-act" aria-label="Re-roll specimen">' + icon("shuffle", 20) + '</button><button type="button" class="slot-act" aria-label="Remove specimen">' + icon("x", 20) + '</button></span></div><div class="slot-grid"><div><label>Category</label><div class="row" style="gap:8px;"><select class="field grow" aria-label="Slot category specimen"><option>Concept</option></select><button type="button" class="slot-act volt" aria-label="New category specimen">' + icon("plus", 20) + '</button></div></div><div><label>Concept item</label><select class="field" aria-label="Slot item specimen"><option>Traces</option></select></div></div></div>');
   b += item("Slot \u00b7 empty state line", '<div class="slot"><div class="slot-head"><span>Slot 2</span><span class="row" style="gap:6px;"><button type="button" class="slot-act" aria-label="Re-roll specimen 2">' + icon("shuffle", 20) + '</button></span></div><p class="dim small" style="margin:0;">Random category + item.</p></div>');
-  b += item("Add-item form \u00b7 .additem-form (inside a slot)", '<form class="additem-form" style="margin-top:0;"><input class="field" placeholder="New Concept item" aria-label="Add item specimen" /><button type="button" class="btn btn-volt" style="padding:7px 14px;">Add</button><button type="button" class="btn" style="padding:7px 10px;">Cancel</button></form>');
-  b += item("New-category form \u00b7 inside a slot (labels, draft chips, actions)", '<div><label class="flabel">Category name</label><input class="field" placeholder="New category name" aria-label="New category specimen" /><div style="margin-top:8px;"><label class="flabel">Items <span style="text-transform:none;letter-spacing:0;font-weight:400;">(optional \u2014 add more later)</span></label></div><div class="row"><input class="field grow" placeholder="An item for this category\u2026" aria-label="New category item specimen" /><button type="button" class="btn btn-volt" style="padding:7px 14px;flex:none;">Add</button></div><div class="row wrap mt1"><span class="pairchip">Waving<button type="button" class="xbtn" aria-label="Remove draft item">' + icon("x", 12) + '</button></span></div><div class="row mt2"><button type="button" class="btn btn-volt" style="padding:7px 16px;">Create category</button><button type="button" class="btn" style="padding:7px 10px;">Cancel</button></div></div>');
+  b += item("Add-item form \u00b7 .additem-form (inside a slot)", '<form class="additem-form" style="margin-top:0;"><input class="field" placeholder="New Concept item" aria-label="Add item specimen" /><button type="button" class="btn btn-volt" style="padding:7px 14px;">Add</button><button type="button" class="btn">Cancel</button></form>');
+  b += item("New-category form \u00b7 inside a slot (labels, draft chips, actions)", '<div><label class="flabel">Category name</label><input class="field" placeholder="New category name" aria-label="New category specimen" /><div style="margin-top:8px;"><label class="flabel">Items <span style="text-transform:none;letter-spacing:0;font-weight:400;">(optional \u2014 add more later)</span></label></div><div class="row"><input class="field grow" placeholder="An item for this category\u2026" aria-label="New category item specimen" /><button type="button" class="btn btn-volt" style="padding:7px 14px;flex:none;">Add</button></div><div class="row wrap mt1 cat-draft-chips"><span class="pairchip">Waving<button type="button" class="xbtn" aria-label="Remove draft item">' + icon("x", 12) + '</button></span></div><div class="row mt2"><button type="button" class="btn btn-volt" style="padding:7px 16px;">Create category</button><button type="button" class="btn">Cancel</button></div></div>', "the draft chips row (.cat-draft-chips) keeps a clear 8px under itself, so a chip never sits on the field or the action row");
   b += item("Add slot row \u00b7 .btn + count text", rowOf('<button type="button" class="btn">' + icon("plus", 14) + ' Add slot</button><span class="dim small">2 of 4 slots</span><button type="button" class="btn" disabled>' + icon("plus", 14) + " Add slot</button>"), "last is disabled at 4 slots; the row carries top scroll clearance, so it never rests half-clipped at the top edge with its + sliced");
   h += rule("Slot builder (picker)", b);
 
@@ -7528,7 +7668,7 @@ function renderStyleGuide() {
   b += item("Toast \u00b7 #toast .pill (live demo)", '<button type="button" class="btn" id="sg-toast">Show the toast</button>', "the real toast appears at the top of the screen");
   b += item("Notes fan, closed \u00b7 .fan-main (64px accent circle)", '<div class="sg-fanrow"><button type="button" class="fan-main" aria-label="Fan closed specimen">' + icon("plus", 32) + "</button></div>");
   b += item("Notes fan, open \u00b7 .fan-opt rows + close state", '<div class="sg-fanrow"><div style="display:flex;flex-direction:column;align-items:flex-end;"><button type="button" class="fan-opt"><span class="oi" style="background:var(--accent);color:#fff;">' + icon("note", 20) + '</span>Add note</button><button type="button" class="fan-opt"><span class="oi" style="background:var(--volt);color:#000;">' + icon("tag", 20) + '</span>Organize tags</button><button type="button" class="fan-opt"><span class="oi" style="border:1px solid rgba(255,210,63,0.6);color:var(--volt);">' + icon("flask", 20) + '</span>Create lab</button><button type="button" class="fan-main" aria-label="Fan open specimen">' + icon("x", 32) + "</button></div></div>", "live, the fan floats over the Notes list with a dim backdrop");
-  b += item("Note save bar \u00b7 #note-savebar contents (pinned above the tab bar)", '<div style="border-top:1px solid var(--border);background:rgba(13,11,16,0.95);padding:10px 12px;display:flex;gap:8px;"><button type="button" class="btn-lg btn-lg-primary" style="flex:1 1 auto;">Save note</button><button type="button" class="btn-lg btn-lg-ghost" style="flex:0 0 auto;">Save &amp; add another</button></div>');
+  b += item("Note save bar \u00b7 #note-savebar contents (pinned above the tab bar)", '<div style="border-top:1px solid var(--border);background:rgba(13,11,16,0.95);padding:10px 12px;display:flex;gap:8px;"><button type="button" class="btn-lg btn-lg-ghost" style="flex:0 0 auto;">Save &amp; add another</button><button type="button" class="btn-lg btn-lg-primary" style="flex:1 1 auto;">Save note</button></div>', "Save note sits on the right and fills what's left; Save &amp; add another leads at its label's width");
   h += rule("Toasts, fan & save bar", b);
 
   /* ================= Sliders, steppers, switches (Conductor) ============= */
@@ -7543,7 +7683,7 @@ function renderStyleGuide() {
   b += item("Four points panel \u00b7 action rows (Stage / Save preset)", '<div style="display:grid;gap:8px;"><div class="row"><span class="ctl-label">Stage</span><button type="button" class="btn">Ripple now</button><button type="button" class="btn">Reset</button></div><div class="row"><button type="button" class="btn">Save preset</button><span class="dim small">These settings, in Labs \u2192 Conductor</span></div></div>');
   b += item("Shapeshifter panel \u00b7 shifterPanelHTML, live state", shifterPanelHTML(st), "the tool\u2019s own panel builder, unwired here");
   b += item("Word bloom panel \u00b7 bloomPanelHTML, live state", bloomPanelHTML(), "the tool\u2019s own panel builder, unwired here");
-  b += item("Mode switch \u00b7 .mode-switch (Layered / In turn / Rounds)", '<div class="mode-switch" role="group"><button type="button" data-sg-group aria-pressed="true">Layered</button><button type="button" data-sg-group aria-pressed="false">In turn</button><button type="button" data-sg-group aria-pressed="false">Rounds</button></div>', "tap to switch");
+  b += item("Mode switch \u00b7 .mode-switch (Freeform / In turn / Rounds)", '<div class="mode-switch" role="group"><button type="button" data-sg-group aria-pressed="true">Freeform</button><button type="button" data-sg-group aria-pressed="false">In turn</button><button type="button" data-sg-group aria-pressed="false">Rounds</button></div>', "tap to switch");
   b += item("Conductor switch \u00b7 .conductor-switch + edit button (the dock)", '<div style="background:#000;border-radius:8px;padding:12px;display:flex;justify-content:center;"><div class="conductor-dock" style="position:static;transform:none;"><div class="conductor-switch" role="group"><button type="button" data-sg-cond class="active" aria-pressed="true">Four points</button><button type="button" data-sg-cond aria-pressed="false">Shapeshifter</button><button type="button" data-sg-cond aria-pressed="false">Word bloom</button></div><button type="button" class="conductor-edit" aria-label="Dock edit specimen">' + icon("pencil", 20) + "</button></div></div>", "tap a segment to switch");
   h += rule("Sliders, steppers & switches \u00b7 Conductor controls", b);
 
@@ -7561,9 +7701,9 @@ function renderStyleGuide() {
   b += item("Section title \u00b7 h2.sec (Create lab / Your labs / Conductor)", '<h2 class="sec" style="margin:0;">Your labs</h2>');
   b += item("Page title \u00b7 24px Archivo black uppercase (overlay screens)", '<h2 class="fd" style="font-size:24px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;margin:0;">Categories</h2><p class="dim" style="font-size:16px;margin:6px 0 0;">The 16px dim line that sits under it.</p>');
   b += item("Modal / builder title \u00b7 24px Archivo black uppercase", '<div style="display:grid;gap:6px;"><p class="fd modal-title">Delete this lab?</p><h2 class="fd" style="font-size:24px;font-weight:900;text-transform:uppercase;letter-spacing:0.03em;margin:0;">Add lab</h2></div>');
-  b += item("Card head \u00b7 .card-head (icon + uppercase label)", '<div style="display:grid;gap:8px;"><p class="card-head">' + icon("timer", 16) + '<span>How it runs</span></p><p class="card-head">' + icon("tag", 16) + '<span>Tags <span class="dim" style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></span></p><p class="card-head">' + icon("bookmark", 16) + "<span>Attach a lab</span></p></div>");
+  b += item("Card head \u00b7 .card-head (icon + uppercase label)", '<div style="display:grid;gap:8px;"><p class="card-head">' + icon("timer", 16) + '<span>How it runs</span></p><p class="card-head">' + icon("tag", 16) + '<span>Tags <span class="dim" style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></span></p><p class="card-head">' + icon("flask", 16) + '<span>Attach a lab</span></p><p class="card-head">' + icon("bookmark", 16) + '<span>Save as lab</span></p></div>');
   b += item("Field title \u00b7 .flabel / slot & control labels (11px, dim2 grey)", '<div style="display:grid;gap:6px;"><label class="flabel">Category name</label><label class="flabel">Items <span style="text-transform:none;letter-spacing:0;font-weight:400;">(optional \u2014 add more later)</span></label><p class="kicker dim" style="margin:0;">Found in this note \u2014 tap to add</p></div>');
-  b += item("Kicker \u00b7 .kicker (11px uppercase \u2014 session mode lines at 12px)", '<div style="display:grid;gap:6px;"><p class="kicker accent" style="font-size:12px;margin:0;">Layered <span class="dim">\u00b7 5 min</span></p><p class="kicker dim" style="margin:0;">Concept</p><p class="kicker volt" style="margin:0;">Piece 1</p></div>');
+  b += item("Kicker \u00b7 .kicker (11px uppercase \u2014 session mode lines at 12px)", '<div style="display:grid;gap:6px;"><p class="kicker accent" style="font-size:12px;margin:0;">Freeform <span class="dim">\u00b7 5 min</span></p><p class="kicker dim" style="margin:0;">Concept</p><p class="kicker volt" style="margin:0;">Piece 1</p></div>');
   b += item("Body sizes \u00b7 .base 14px / .sm2 12px / .small 12px / dim", '<div style="display:grid;gap:4px;"><p class="base" style="margin:0;">Base \u2014 14px body text, the tool\u2019s default reading size.</p><p class="sm2" style="margin:0;">Sm2 \u2014 12px.</p><p class="small" style="margin:0;">Small \u2014 12px.</p><p class="base dim" style="margin:0;">Dim \u2014 secondary text colour.</p><p class="base" style="margin:0;"><span class="volt" style="font-weight:600;">Volt</span> and <span class="accent" style="font-weight:600;">accent</span> inline colours.</p></div>');
   b += item("Run description \u00b7 .run-desc", '<p class="run-desc" style="margin:0;">Layer the lab\u2019s items together, freeform, for the whole time.</p>');
   b += item("Note text \u00b7 .note-pre (18px, on the note\u2019s page)", '<pre class="note-pre" style="margin:0;">Leading head snaking</pre>');
@@ -7575,7 +7715,7 @@ function renderStyleGuide() {
   /* ============================== Navigation ============================= */
   b = "";
   b += item("Tab bar \u00b7 #tabbar (shown in place \u2014 the real one is fixed under this sheet)", '<nav class="sg-tabbar" aria-label="Tab bar specimen"><div class="inner" role="tablist"><button type="button" role="tab" data-sg-tab aria-selected="true">' + icon("timer", 20) + 'Timer</button><button type="button" role="tab" data-sg-tab aria-selected="false">' + icon("flask", 20) + 'Labs</button><button type="button" role="tab" data-sg-tab aria-selected="false">' + icon("note", 20) + 'Notes</button><button type="button" role="tab" data-sg-tab aria-selected="false">' + icon("play", 20) + 'Party</button><button type="button" role="tab" data-sg-tab aria-selected="false">' + icon("pencil", 20) + "Conductor</button></div></nav>", "tap to switch the selected tab");
-  b += item("Timer footer \u00b7 Add lab (fills) + Start (fits), one row", '<div style="border-top:1px solid var(--border);background:var(--surface);padding:8px 12px;"><div style="display:flex;gap:8px;align-items:stretch;"><button type="button" class="btn-lg btn-lg-outline-volt" style="flex:1 1 0;width:auto;min-width:0;margin:0;box-shadow:none;">' + icon("plus", 20) + ' Add lab</button><button type="button" class="btn-lg btn-lg-primary" style="flex:none;width:auto;">' + icon("play", 20) + " Start \u00b7 2 labs</button></div></div>");
+  b += item("Timer footer \u00b7 Add lab (fits) + Start (fills), one row", '<div style="border-top:1px solid var(--border);background:var(--surface);padding:8px 12px;"><div style="display:flex;gap:8px;align-items:stretch;"><button type="button" class="btn-lg btn-lg-outline-volt" style="flex:0 0 auto;width:auto;min-width:0;margin:0;box-shadow:none;">' + icon("plus", 20) + ' Add lab</button><button type="button" class="btn-lg btn-lg-primary" style="flex:1;width:auto;min-width:0;">' + icon("play", 20) + " Start \u00b7 2 labs</button></div></div>", "Add lab sizes to its label; Start takes the rest of the row (batch .45 \u2014 the split used to run the other way)");
   b += item("Filter meta row \u00b7 count + Clear (Notes, while filtering)", '<div class="row" style="justify-content:space-between;gap:12px;"><p class="base" style="margin:0;font-weight:700;">Tag: <span class="volt">Snaking</span> \u00b7 3 notes</p><button type="button" class="btn btn-s" style="text-transform:uppercase;">' + icon("x", 14) + " Clear</button></div>");
   h += rule("Navigation & page chrome", b);
 
@@ -7583,9 +7723,9 @@ function renderStyleGuide() {
   b = "";
   b += item("Session top bar \u00b7 .session-topbar (elapsed left, Finish right)", '<div class="session-topbar"><p class="session-elapsed" style="margin:0;">This lab <span class="volt">0:11</span> \u00b7 Session <span class="volt">0:12</span></p>' + finishBtnHTML() + "</div>");
   b += item("Done top bar \u00b7 close in the right corner", '<div class="session-topbar"><span aria-hidden="true"></span><button type="button" class="iconbtn" id="sg-done-x" aria-label="Close specimen" style="background:var(--surface);margin-left:auto;">' + icon("x", 20) + "</button></div>");
-  b += item("Session stage \u00b7 Layered (kicker, items, clock, bar, transport)", '<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;"><p class="kicker accent" style="font-size:12px;margin:0;text-align:center;">Layered <span class="dim">\u00b7 5 min</span></p><div class="session-items" style="margin-top:8px;"><div style="text-align:center;"><p class="kicker dim" style="margin:0;">Character</p><p class="fd session-item" style="font-size:36px;">Gestures</p></div><div style="text-align:center;"><p class="kicker dim" style="margin:0;">Random Texture<button type="button" class="iconbtn iconbtn-s session-reroll" aria-label="Shuffle specimen">' + icon("shuffle", 12) + '</button></p><p class="fd session-item" style="font-size:36px;">Waves</p></div></div><p class="fd session-clock" style="text-align:center;">4:47</p><div class="bar session-bar" style="margin-top:16px;"><i style="width:8%;"></i></div><div class="session-transport">' + transportHTML() + "</div></div>", "transport is the tool\u2019s own builder \u2014 session list / prev / Pause / next / add-note + Lab N of M — and a Random slot's label carries the shuffle button: tap to re-roll just that slot");
+  b += item("Session stage \u00b7 Freeform (kicker, items, clock, bar, transport)", '<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;"><p class="kicker accent" style="font-size:12px;margin:0;text-align:center;">Freeform <span class="dim">\u00b7 5 min</span></p><div class="session-items" style="margin-top:8px;"><div style="text-align:center;"><p class="kicker dim" style="margin:0;">Character</p><p class="fd session-item" style="font-size:36px;">Gestures</p></div><div style="text-align:center;"><p class="kicker dim" style="margin:0;">Random Texture<button type="button" class="iconbtn iconbtn-s session-reroll" aria-label="Shuffle specimen">' + icon("shuffle", 12) + '</button></p><p class="fd session-item" style="font-size:36px;">Waves</p></div></div><p class="fd session-clock" style="text-align:center;">4:47</p><div class="bar session-bar" style="margin-top:16px;"><i style="width:8%;"></i></div><div class="session-transport">' + transportHTML() + "</div></div>", "transport is the tool\u2019s own builder \u2014 session list / prev / Pause / next / add-note + Lab N of M — and a Random slot's label carries the shuffle button: tap to re-roll just that slot");
   b += item("Transport, paused \u00b7 Resume state", '<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;"><div class="transport-row"><button type="button" class="skipbtn" aria-label="Session list specimen">' + icon("list", 24) + '</button><button type="button" class="skipbtn" aria-label="Prev specimen">' + icon("prev", 24) + '</button><button type="button" class="transport">' + icon("play", 24) + ' Resume</button><button type="button" class="skipbtn" aria-label="Next specimen">' + icon("next", 24) + '</button><button type="button" class="skipbtn" aria-label="Add note specimen">' + icon("edit", 24) + '</button></div><p class="lab-of">Lab 1 of 2</p></div>');
-  b += item("Plain timer stage \u00b7 .plain-clock (bigger than the session clock)", '<div class="plain-stage" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;"><p class="kicker accent" style="font-size:12px;margin:0 0 14px;">Layered <span class="dim">\u00b7 5 min</span></p><p class="fd plain-clock">4:47</p><div class="bar session-bar"><i style="width:8%;"></i></div></div>');
+  b += item("Plain timer stage \u00b7 .plain-clock (bigger than the session clock)", '<div class="plain-stage" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;"><p class="kicker accent" style="font-size:12px;margin:0 0 14px;">Freeform <span class="dim">\u00b7 5 min</span></p><p class="fd plain-clock">4:47</p><div class="bar session-bar"><i style="width:8%;"></i></div></div>');
   b += item("Plain timer, finished \u00b7 .plain-finished + way back", '<div class="plain-stage" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;"><p class="fd plain-finished">Finished</p><div class="mt4"><button type="button" class="btn-lg btn-lg-primary">' + icon("chevL", 20) + " Back to Timer</button></div></div>");
   b += item("Break stage \u00b7 .break-big on break blue (Rounds / plain)", '<div style="background:var(--break-bg);border-radius:8px;padding:16px;text-align:center;"><p class="kicker" style="font-size:12px;margin:0;color:var(--break);">Round 1 done</p><p class="fd break-big">Break \u2014 next round in 9s</p><div class="bar session-bar"><i style="width:30%;background:var(--break);"></i></div></div>');
   b += item("Done headline \u00b7 48px Done + total line", '<div style="text-align:center;"><p class="fd" style="font-size:48px;font-weight:900;margin:0;">Done</p><p style="font-size:20px;font-weight:700;margin:6px 0 0;"><span class="volt">35s</span> <span class="dim">\u00b7 4 labs</span></p></div>');
@@ -7595,10 +7735,10 @@ function renderStyleGuide() {
 
   /* ================================ Party ================================ */
   b = "";
-  b += item("Party top bar \u00b7 dance select (32px) + info .iconbtn", '<div style="background:#000;border-radius:8px;padding:12px;"><div class="party-topbar" style="position:static;padding:0;"><div class="party-select-wrap"><select aria-label="Choose a dance specimen"><option>Cha Cha Slide</option><option>Dougie</option></select>' + icon("chevD", 12) + '</div><button type="button" class="iconbtn" aria-label="About this dance specimen">' + icon("info", 16) + "</button></div></div>");
-  b += item("Party caption \u00b7 dance name + era over the stage", '<div style="background:#000;border-radius:8px;padding:12px;"><div class="party-caption" style="position:static;"><h2 class="fd">Cha Cha Slide</h2><div class="party-era">2000 \u00b7 Line dance</div></div></div>');
+  b += item("Party top bar \u00b7 dance select (48px) + info .iconbtn.iconbtn-l (L tier)", '<div style="background:#000;border-radius:8px;padding:12px;"><div class="party-topbar" style="position:static;padding:0;"><div class="party-select-wrap"><select aria-label="Choose a dance specimen"><option>Dougie</option><option>Stanky Legg</option></select>' + icon("chevD", 12) + '</div><button type="button" class="iconbtn iconbtn-l" aria-label="About this dance specimen">' + icon("info", 24) + "</button></div></div>");
+  b += item("Party caption \u00b7 dance name + era over the stage", '<div style="background:#000;border-radius:8px;padding:12px;"><div class="party-caption" style="position:static;"><h2 class="fd">Dougie</h2><div class="party-era">2010 \u00b7 Party dance</div></div></div>');
   b += item("Party transport \u00b7 .party-speedseg fits its contents, .party-play (48px) at the right", '<div style="background:#000;border-radius:8px;padding:12px;"><div class="party-transport" style="position:static;"><div class="party-speedseg"><button type="button" data-sg-press aria-pressed="false">0.25\u00d7</button><button type="button" data-sg-press aria-pressed="false">0.5\u00d7</button><button type="button" data-sg-press aria-pressed="false">0.75\u00d7</button><button type="button" data-sg-press aria-pressed="true">1\u00d7</button></div><button type="button" class="party-play" aria-label="Pause specimen">' + icon("pause", 24) + "</button></div></div>", "speed segment sizes to its buttons; the 48px play button takes the right side");
-  b += item("Party info rows \u00b7 .party-row (credit / origin / context)", '<div style="background:var(--overlay);border-radius:8px;padding:4px 12px;"><dl class="party-rows" style="margin:0;"><div class="party-row" style="border-top:0;"><dt>Creator</dt><dd>DJ Casper<small>Willie Perry Jr. \u2014 DJ and performer</small></dd></div><div class="party-row"><dt>Origin</dt><dd><span class="party-missing">Not documented</span></dd></div></dl></div>');
+  b += item("Party info rows \u00b7 .party-row (credit / origin / context)", '<div style="background:var(--overlay);border-radius:8px;padding:4px 12px;"><dl class="party-rows" style="margin:0;"><div class="party-row" style="border-top:0;"><dt>Attributed to</dt><dd>Dallas hip-hop scene<small>Popularised nationally by Cali Swag District\u2019s \u201cTeach Me How to Dougie\u201d</small></dd></div><div class="party-row"><dt>Origin</dt><dd>Dallas, Texas</dd></div></dl></div>');
   h += rule("Party chrome", b);
 
   /* ================================ Color ================================ */
@@ -7628,13 +7768,19 @@ function renderStyleGuide() {
   h += rule("Type, spacing & shape", b);
 
   b = "";
-  b += line("The Timer opens on Today: the session queue first, each lab carrying its own run (Layered / In turn / Rounds, with its own times), set in the centered Add-lab modal or by tapping a queued lab\u2019s run badge. Start plays the labs in order, each at its own run; Next moves to the next lab while Rounds and passes repeat in place. When a session ends, its log shows the time actually spent per lab \u2014 repeats included \u2014 and can be saved as a note with those labs attached.");
+  b += line("The Timer opens on Today: the session queue first, each lab carrying its own run (Freeform / In turn / Rounds, with its own times), set in the centered Add-lab modal or by tapping a queued lab\u2019s run badge. Start plays the labs in order, each at its own run; Next moves to the next lab while Rounds and passes repeat in place. When a session ends, its log shows the time actually spent per lab \u2014 repeats included \u2014 and can be saved as a note with those labs attached.");
   b += line("While Today is empty the footer button reads Start timer instead: it opens a plain-timer setup (a mode and its times, nothing else) and starts a timer with no lab attached \u2014 a much bigger countdown, Pause and Finish only, and a Finished screen with no note, log or save.");
   b += line("During a lab session, the pencil-and-paper button right of Next opens a note composer over the timer \u2014 opening it pauses the timer, and closing it (save or cancel) resumes \u2014 and the note is filed under the lab playing at that moment. On the Done screen those notes preview under their labs, and saving the session note writes them into its text under each lab\u2019s line. Closing the Done screen with \u00d7 instead saves each of those notes separately in Notes, each attached to the one lab it was written under.");
   b += line("The list button at the transport\u2019s far left opens a preview of the session\u2019s labs over the timer: every lab in order as a Today queue row, the one playing now outlined, nothing tappable. Opening it pauses the timer the same way the note composer does, and closing it resumes \u2014 only if the preview is what paused it. A plain timer has no labs, so it never gets the button.");
   b += line("In a running session, a Random slot's label carries a small shuffle button beside it: tapping re-rolls just that slot to a different item from its category — never the item already showing — while the clock keeps counting. The saved lab is untouched; the slot is still random next time it runs.");
   b += line("A modal belongs to the tab that opened it. Switching tabs tucks an open modal away with its own tab — backdrop and scroll lock too — and returning to that tab restores it exactly as it was left, instead of floating it over the new page.");
+  b += line("Every modal shares one maximum height \u2014 the viewport minus the tab bar and a 24px breathing gap \u2014 and every centered modal clears the notch with the same top inset, so no modal outgrows the screen however much it holds: in the bloom words modal the saved blooms scroll inside the card, and saving more blooms never stretches it.");
+  b += line("Every card in the Labs list is the same block at the same sizes \u2014 labs, note labs, Conductor presets and Word blooms alike, all on Button M / Icon M; only the content differs by kind. On a note\u2019s page, Attach a lab (the beaker) links an existing lab to the note, while Save as lab \u2014 in its own box \u2014 creates a new lab whose drill is the note itself.");
+  b += line("The Party list is four dances \u2014 Dougie, Stanky Legg, Harlem Shake and Chicken Noodle Soup \u2014 its top bar rides the L tier (48px select and info button), and the placeholder stage is just the bouncing figure: no caption, no chip. Practice buttons are always the orange accent; the note editor\u2019s Save note is orange too, and splitting a note is the volt action.");
   b += line("The Labs builder\u2019s Save / Send to Timer pair always stays inside its card: Send keeps the full width its label needs and Save takes whatever is left, rather than both buttons holding a half-width floor and pushing Send out of the card at phone width.");
+  b += line("The Categories form\u2019s Create / Cancel pair follows the same pattern (.cat-pair): Create fits its label, Cancel fills the rest, and neither holds the half-width floor that pushed Cancel out of its card. Tapping that Cancel only clears the New Category form \u2014 name, item, draft chips \u2014 and stays on the Categories screen; Back is the way out.");
+  b += line("Buttons share one minimum horizontal padding \u2014 16px a side on the standard button (Button L carries 20px) \u2014 so no label crowds its edges. On the New Note page, Save note sits on the right of its bar and fills the space beside Save &amp; add another. Draft item chips keep a clear margin under their row, so they never overlap the item field below them.");
+  b += line("In the Timer footer, Add lab sizes to its label and Start fills the rest of the row \u2014 the reverse of the earlier split.");
   b += line("Nothing rests half-clipped at a scroller\u2019s top edge: the page views and the builder\u2019s scroller carry top scroll padding and the Add slot buttons carry the matching scroll margin, so a scroll that lands on the Add slot row parks it whole, + icon included. A long lab name truncates inside its field with an ellipsis and right padding instead of running off the edge mid-word.");
   b += line("This copy is build <strong>" + BUILD_ID + "</strong>. If a Home Screen copy shows an older build here, it\u2019s still running a cached page \u2014 the tool reloads itself once when it spots that, and fully closing and reopening the app clears the rest.");
   h += rule("Behavior", b);
@@ -7772,25 +7918,20 @@ function renderStyleGuide() {
    with a speed control to slow it down. The info button opens a sheet
    that credits who the dance comes from, with a short context line.
    No steps and no teaching anywhere. Until real clips exist, a
-   clearly labelled placeholder animation stands in on the stage; a
+   placeholder animation — just the bouncing figure — stands in on
+   the stage; a
    clip picked from the device plays in the same native video element
    and the speed control drives it for real.
    ===================================================================== */
 var PARTY_DANCES = [
-  { name: "Cha Cha Slide", era: "2000 · Line dance", creditLabel: "Creator", creator: "DJ Casper", creatorNote: "Willie Perry Jr. — DJ and performer", origin: "Chicago, Illinois", color: "#ff4d2e",
-    context: "Created by Perry for a fitness class, then released as a single; one of the most widely played line dances in the US." },
-  { name: "Cupid Shuffle", era: "2007 · Line dance", creditLabel: "Creator", creator: "Cupid", creatorNote: "Bryson Bernard — singer from Lafayette", origin: "Lafayette, Louisiana", color: "#ffd23f",
-    context: "Released on Cupid’s album Time for a Change and spread through clubs, weddings and step shows." },
-  { name: "Electric Slide", era: "1976 · Line dance", creditLabel: "Choreographer", creator: "Ric Silver", creatorNote: "Choreographer; the dance was set to Marcia Griffiths’ “Electric Boogie”", origin: null, color: "#7ec3ff",
-    context: "One of the longest-lived line dances in the world. Silver has spent years asserting his authorship of the choreography — a good example of why credit matters here." },
-  { name: "Harlem Shake", era: "1981 · Original dance", creditLabel: "Attributed to", creator: "Al B", creatorNote: "Albert Boyce — Harlem resident; the original dance, not the 2012 meme", origin: "Harlem, New York City", color: "#b78cff",
-    context: "Boyce performed it at halftime during Entertainers Basketball Classic games at Rucker Park. It later entered hip-hop videos in the early 2000s." },
-  { name: "Stanky Legg", era: "2008 · Party dance", creditLabel: "Creator", creator: "GS Boyz", creatorNote: "A crew, not a single person — the credit can be a group", origin: "Arlington, Texas", color: "#5fd68a",
-    context: "Released as the group’s debut single; the dance and the song spread together through Texas clubs and early social video." },
   { name: "Dougie", era: "2010 · Party dance", creditLabel: "Attributed to", creator: "Dallas hip-hop scene", creatorNote: "Popularised nationally by Cali Swag District’s “Teach Me How to Dougie” (Inglewood, California)", origin: "Dallas, Texas", color: "#ff8a5c",
     context: "The move circulated in Dallas before the song carried it nationwide — which is why this one is an attribution, not a single named creator." },
-  { name: "Crank That", era: "2007 · Party dance", creditLabel: "Creator", creator: "Soulja Boy", creatorNote: "DeAndre Way — rapper and producer", origin: "Atlanta, Georgia", color: "#5cc8d6",
-    context: "One of the first dances to spread primarily through online video, ahead of its commercial single release." }
+  { name: "Stanky Legg", era: "2008 · Party dance", creditLabel: "Creator", creator: "GS Boyz", creatorNote: "A crew, not a single person — the credit can be a group", origin: "Arlington, Texas", color: "#5fd68a",
+    context: "Released as the group’s debut single; the dance and the song spread together through Texas clubs and early social video." },
+  { name: "Harlem Shake", era: "1981 · Original dance", creditLabel: "Attributed to", creator: "Al B", creatorNote: "Albert Boyce — Harlem resident; the original dance, not the 2012 meme", origin: "Harlem, New York City", color: "#b78cff",
+    context: "Boyce performed it at halftime during Entertainers Basketball Classic games at Rucker Park. It later entered hip-hop videos in the early 2000s." },
+  { name: "Chicken Noodle Soup", era: "2006 · Party dance", creditLabel: "Creator", creator: "DJ Webstar & Young AB", creatorNote: "Harlem artists; the track features Voice of Harlem", origin: "Harlem, New York City", color: "#7ec3ff",
+    context: "Built around a loose, side-to-side shuffle with swinging arms; the song and its dance spread out of Harlem through early online video." }
 ];
 var PARTY_SPEEDS = [0.25, 0.5, 0.75, 1];
 var partyState = { idx: 0, speed: 1, playing: true, hasVideo: false };
@@ -7804,14 +7945,12 @@ function renderParty() {
   h += '<div class="party-rings"><span class="party-ring"></span><span class="party-ring"></span><span class="party-ring"></span>';
   h += '<svg class="party-figure" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13" cy="4" r="1.8" fill="currentColor" stroke="none"/><path d="M13 7l-3.5 3L6 8.5M13 7l2.5 3.5L19 12M13 7l-1 5-2.5 5M12 12l2 4 1 5"/></svg>';
   h += "</div>";
-  h += '<div class="party-ph-tag">Placeholder visual</div>';
-  h += '<div class="party-ph-sub">A short looping clip of the dance plays here — muted, on loop, taking up the whole screen.</div>';
   h += "</div></section>";
   h += '<div class="party-shade-top"></div><div class="party-shade-bottom"></div>';
   h += '<div class="party-topbar"><div class="party-select-wrap"><select id="party-select" aria-label="Choose a dance">';
   PARTY_DANCES.forEach(function (d, i) { h += '<option value="' + i + '">' + esc(d.name) + "</option>"; });
   h += "</select>" + icon("chevD", 12) + "</div>";
-  h += '<button type="button" class="iconbtn" id="party-info" aria-label="About this dance" aria-haspopup="dialog">' + icon("info", 16) + "</button></div>";
+  h += '<button type="button" class="iconbtn iconbtn-l" id="party-info" aria-label="About this dance" aria-haspopup="dialog">' + icon("info", 24) + "</button></div>";
   h += '<div class="party-caption"><h2 class="fd" id="party-name">—</h2><div class="party-era" id="party-era"></div></div>';
   h += '<div class="party-transport"><div class="party-speedseg" id="party-speedseg" role="group" aria-label="Playback speed">';
   PARTY_SPEEDS.forEach(function (s) { h += '<button type="button" data-party-speed="' + s + '" aria-pressed="' + (s === 1 ? "true" : "false") + '">' + s + "×</button>"; });
@@ -11202,7 +11341,7 @@ function bloomPanelHTML() {
   h += '<div class="row mt2"><label class="ctl-label" for="c-bloom-size">Size</label><input type="range" id="c-bloom-size" min="0.8" max="2.6" step="0.1" value="' + bs.size + '" /><span class="ctl-val" id="c-bloom-size-val">' + bs.size.toFixed(1) + "×</span></div>";
   h += '<div class="row mt2"><span class="ctl-label" id="c-bloom-rate-label">Rate</span>' + ctlChipsHTML("bloom-rate", BLOOM_RATES, bloomRateValue(bs.rate)) + "</div>";
   h += '<div class="row mt2"><span class="ctl-label">Stage</span><button type="button" class="btn" id="c-bloom-now">Bloom now</button></div>';
-  h += '<div class="row mt2"><button type="button" class="btn" id="c-bloom-save-preset">Save bloom</button><span class="dim small">Words + these settings, in Labs &rarr; Conductor</span></div>';
+  h += '<div class="row mt2"><button type="button" class="btn" id="c-bloom-save-preset" style="flex:none;white-space:nowrap;">Save bloom</button><span class="dim small">Words + these settings, in Labs &rarr; Conductor</span></div>';
   return h;
 }
 function wireBloomChips() {
