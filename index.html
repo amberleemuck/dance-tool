@@ -397,7 +397,7 @@
       /* Session stops above the tab bar: nav stays visible; tapping away pauses. */
       #session { bottom: var(--tabbar-h); }
       #session.break { background: var(--break-bg); }
-      .rounds-particles { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+      .rounds-particles, .coach-particles { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
       .break-big { font-size: 44px; font-weight: 900; line-height: 1.02; color: var(--break); overflow-wrap: break-word; margin: 12px 0 0; font-variant-numeric: tabular-nums; }
       /* Notes: one search-and-filter panel above the list */
       #view-notes { position: relative; }
@@ -880,7 +880,11 @@
       .plain-clock { font-size: clamp(88px, 26vw, 124px); font-weight: 900; line-height: 1; color: var(--volt); font-variant-numeric: tabular-nums; margin: 0; }
       @media (min-width: 700px) { .plain-clock { font-size: 132px; } }
       @media (max-height: 660px) { .plain-clock { font-size: 84px; } }
-      .plain-stage { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+      .plain-stage { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; }
+      /* Coach: the Tips word bloom runs on a full-bleed canvas
+         behind the plain timer; the top bar and the transport sit
+         in positioned layers above it, like the stage itself. */
+      #session.coach .session-topbar, #session.coach .session-transport { position: relative; }
       .plain-break-big { font-size: 44px; font-weight: 900; line-height: 1.05; color: var(--break); margin: 0; overflow-wrap: break-word; }
       .plain-finished { font-size: 56px; font-weight: 900; line-height: 1.05; margin: 0; }
 
@@ -1453,7 +1457,7 @@ var FALLBACK_BAKED = {
    as empty space under the tab bar, for one) and init() reloads once
    to pick up the fresh document. The Style guide shows this stamp so
    a stale copy can be spotted at a glance. */
-var BUILD_ID = "2026-11-13.48";
+var BUILD_ID = "2026-11-13.51";
 
 /* ---------------- Home Screen inset fix ----------------
    The Home Screen (standalone) webview reports an inflated
@@ -1546,6 +1550,10 @@ var state = {
      never disturbs the other. */
   plainOpen: false,
   plainRun: null,
+  /* Coach for the plain timer: off by default; when on, Tips
+     words bloom behind the countdown. Remembered while the page
+     lives, like the last-used run — never a lab-session thing. */
+  plainCoach: false,
   /* Practice mode (from a lab card's Practice button): the modal
      shows one lab + its run setup, and its confirm button Starts
      the session with that lab instead of queueing it. Queue-edit
@@ -2040,7 +2048,7 @@ function hideBakedLab(lab) {
 }
 function labInTimer(lab) {
   var name = lab.name || labName(pairsForLab(lab));
-  return state.drills.some(function (d) { return d.name === name || (lab.noteKey && d.noteKey === lab.noteKey); });
+  return state.drills.some(function (d) { return d.name === name || !!(lab.noteKey && drillNoteKey(d) === lab.noteKey); });
 }
 function sendLabToTimer(lab) {
   var pairs = pairsForLab(lab);
@@ -2056,8 +2064,9 @@ function sendLabToTimer(lab) {
 /* A queued drill's title, read live for note drills so a renamed
    (edited) note shows its current first line, not a stale copy. */
 function drillTitle(d) {
-  if (d && d.noteKey) {
-    var n = findUnifiedNote(d.noteKey);
+  var nk = drillNoteKey(d);
+  if (nk) {
+    var n = findUnifiedNote(nk);
     if (n) return noteTitleFromBody(n.body).slice(0, 64);
   }
   return d ? d.name : "";
@@ -2157,20 +2166,32 @@ function ensureAudio() {
 function beep() {
   if (!audioCtx) return;
   try {
-    var t0 = audioCtx.currentTime;
-    [0, 0.28, 0.56].forEach(function (off) {
-      var osc = audioCtx.createOscillator();
-      var gain = audioCtx.createGain();
+    /* The finish sound is the Singing Bowl she picked from the
+       timer sound options page (02 — warm & calm), synthesized
+       exactly as that page plays it: a struck C5 bowl (523.25 Hz)
+       with its inharmonic partials (×2.76, ×5.4) and a C4 body
+       tone underneath, each sine rising in 10ms and decaying
+       exponentially — a long warm ring instead of the old triple
+       beep. The vibration stays. */
+    var ac = audioCtx;
+    function bowlTone(freq, dur, vol) {
+      var t = ac.currentTime;
+      var osc = ac.createOscillator();
+      var gain = ac.createGain();
       osc.type = "sine";
-      osc.frequency.value = 880;
-      gain.gain.setValueAtTime(0.0001, t0 + off);
-      gain.gain.exponentialRampToValueAtTime(0.5, t0 + off + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + off + 0.22);
+      osc.frequency.setValueAtTime(freq, t);
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(vol, t + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
       osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start(t0 + off);
-      osc.stop(t0 + off + 0.25);
-    });
+      gain.connect(ac.destination);
+      osc.start(t);
+      osc.stop(t + dur + 0.05);
+    }
+    bowlTone(523.25, 2.8, 0.32);
+    bowlTone(523.25 * 2.76, 1.6, 0.10);
+    bowlTone(523.25 * 5.4, 0.7, 0.04);
+    bowlTone(261.6, 2.2, 0.14);
     if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
   } catch (e) { /* visual state still advances */ }
 }
@@ -2721,14 +2742,49 @@ var queue = {
     renderTimerFooter();
   }
 };
+/* The note key a queued drill stands for, or null when it is an
+   ordinary drill. A drill carries the key when it was queued from
+   a note lab — but a drill can BE a note lab without carrying it:
+   labs built from a note's tags (an older flow, or one baked in
+   from it) keep the note's title as their name and the tagged
+   items as their pairs, so the queue ends up holding the note's
+   TAGS where the note itself should be, and the Timer played
+   Style: Liquid / Concept: Fixed Points for a lab that was
+   supposed to drill the note. When a note lab exists for a note
+   whose title is exactly this drill's name, the note lab is what
+   she meant — the drill resolves to the note. A drill whose name
+   merely resembles a note, or whose note was never saved as a
+   lab, is untouched: it plays its own items, attached note or
+   not — that is the line between a note lab (plays the note) and
+   a regular lab with a note attached (plays the lab's items). */
+function drillNoteKey(entry) {
+  if (!entry) return null;
+  if (entry.noteKey) return entry.noteKey;
+  var name = entry.name || "";
+  if (!name) return null;
+  var found = null;
+  allLabs().forEach(function (l) {
+    if (found || !l.noteKey) return;
+    var n = findUnifiedNote(l.noteKey);
+    if (!n) return;
+    var title = noteTitleFromBody(n.body);
+    if (name === title || name === title.slice(0, 64)) found = l;
+  });
+  return found ? found.noteKey : null;
+}
 function queueLabItems(entry) {
   /* Note drills resolve live from the note, so edits flow through
-     even after the drill was queued. */
-  if (entry.noteKey) {
-    var n = findUnifiedNote(entry.noteKey);
+     even after the drill was queued — and the note ALWAYS wins
+     over any pairs the drill happens to carry, tags included:
+     a note lab's one slot is the note itself. */
+  var nk = drillNoteKey(entry);
+  if (nk) {
+    var n = findUnifiedNote(nk);
     if (n) return [{ category: "Note", item: n.body }];
-    if (entry.pairs && entry.pairs.length > 0) return entry.pairs;
-    return [{ category: "Note", item: entry.name }];
+    if (entry.noteKey) {
+      if (entry.pairs && entry.pairs.length > 0) return entry.pairs;
+      return [{ category: "Note", item: entry.name }];
+    }
   }
   if (entry.pairs && entry.pairs.length > 0) return entry.pairs;
   return [{ category: "Drill", item: entry.name }];
@@ -2766,8 +2822,13 @@ function renderToday() {
        long name can never wrap the row tall or push its controls
        off the edge. The run badge sits under the text — this lab's
        own mode and times — and tapping it reopens the run setup. */
+    /* A note drill's line says what it is — "Note lab ·" ahead of
+       the note's text — so it can never be mistaken for a regular
+       lab's item list: a note lab plays the note, a regular lab
+       plays its items, and the row shows which one this is. */
+    var isNoteDrill = !!drillNoteKey(d);
     h += '<span class="grow" style="min-width:0;"><span class="fd" style="display:block;font-size:12px;font-weight:700;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(drillTitle(d)) + '</span>' +
-      '<span class="small" style="display:block;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' + (pairs.length > 0 && pairs.every(function (p) { return !!catNames[p.category]; }) ? 'color:var(--tag);' : 'color:var(--dim);') + '">' + esc(pairs.map(function (p) { return p.item ? String(p.item).replace(/\s+/g, " ") : "Random " + p.category; }).join(" · ")) + '</span>' +
+      '<span class="small" style="display:block;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' + (pairs.length > 0 && pairs.every(function (p) { return !!catNames[p.category]; }) ? 'color:var(--tag);' : 'color:var(--dim);') + '">' + esc((isNoteDrill ? "Note lab · " : "") + pairs.map(function (p) { return p.item ? String(p.item).replace(/\s+/g, " ") : "Random " + p.category; }).join(" · ")) + '</span>' +
       '<span style="display:block;margin-top:4px;"><button type="button" class="run-badge" data-run="' + d.id + '" aria-label="How ' + esc(drillTitle(d)) + ' runs: ' + esc(runSummary(run)) + ' — tap to change">' + icon("timer", 14) + " " + esc(runSummary(run)) + "</button></span></span>";
     /* Reorder arrows sit with the row's other controls: up / down
        swap the lab with its neighbour in the queue. */
@@ -3137,7 +3198,7 @@ function openQueueEditor(drillId) {
   var drill = null;
   state.drills.forEach(function (d) { if (d.id === drillId) drill = d; });
   if (!drill) return;
-  if (drill.noteKey) { openRunEditor(drillId); return; }
+  if (drillNoteKey(drill)) { openRunEditor(drillId); return; }
   state.builderOpen = true;
   state.builderEditDrillId = null;
   state.builderEditQueueId = drillId;
@@ -3215,7 +3276,7 @@ function confirmLabBuilder() {
   var name = currentPickerTitle(ps);
   var selLab = state.source === "lab" ? selectedLab() : null;
   var nKey = selLab && selLab.noteKey ? selLab.noteKey : null;
-  if (state.drills.some(function (d) { return d.name === name || (nKey && d.noteKey === nKey); })) {
+  if (state.drills.some(function (d) { return d.name === name || !!(nKey && drillNoteKey(d) === nKey); })) {
     showToast("Already in Today — it's queued.");
     closeLabBuilder();
     return;
@@ -3252,7 +3313,12 @@ function renderTimerFooter() {
     var labs = state.drills.map(function (d) {
       var prs = queueLabItems(d);
       var entry = { title: drillTitle(d), pairs: prs, items: resolveForSession(prs), run: drillRun(d) };
-      if (d.noteKey) entry.noteKey = d.noteKey;
+      /* The session entry carries the note key whenever the drill
+         stands for a note lab — by key or by the name match in
+         drillNoteKey — so the session re-reads the note live and
+         the log treats it as a note lab, never as its tags. */
+      var nk = drillNoteKey(d);
+      if (nk) entry.noteKey = nk;
       return entry;
     });
     openSession({ labs: labs, loop: true });
@@ -3267,7 +3333,10 @@ function renderTimerFooter() {
    the timing structure alone — Freeform is one countdown for the
    chosen duration, In turn repeats its interval, Rounds cycles
    rounds and 10s breaks — until Finish, which shows a simple
-   Finished screen with no note, no log and no save.
+   Finished screen with no note, no log and no save. The setup
+   also carries the Coach toggle (plain timer only): when on,
+   Tips-category words bloom faintly behind the countdown for
+   the whole run (see coachFx).
    ===================================================================== */
 function plainRunHTML() {
   var run = normalizeRun(state.plainRun || defaultRun());
@@ -3331,6 +3400,15 @@ function renderPlainTimer() {
   h += '<div class="builder-scroll">';
   h += '<p class="dim base" style="margin:2px 0 0;line-height:1.45;">Just a timer — no lab, no items. Pick how it runs and start.</p>';
   h += '<div id="plain-run" class="mt3">' + plainRunHTML() + "</div>";
+  /* Coach: a plain-timer-only extra, so it lives here in the
+     plain setup and nowhere else — lab sessions never see it.
+     Off by default; the toggle is a segment in the tool's own
+     on/off language (volt when pressed). */
+  h += '<div class="row mt3" style="justify-content:space-between;gap:12px;border-top:1px solid var(--border);padding-top:12px;align-items:flex-start;">';
+  h += '<div style="min-width:0;"><p class="card-head"><span>Coach</span></p>';
+  h += '<p class="dim small" style="margin:4px 0 0;line-height:1.45;">Items from the Tips category bloom quietly behind the timer while it runs.</p></div>';
+  h += '<button type="button" class="seg fd" id="plain-coach" style="flex:none;" aria-pressed="' + (state.plainCoach ? "true" : "false") + '" aria-label="Coach — when on, Tips words bloom behind the plain timer">' + (state.plainCoach ? "On" : "Off") + "</button>";
+  h += "</div>";
   h += "</div>";
   h += '<div class="builder-foot">';
   h += '<button type="button" class="btn-lg btn-lg-ghost" id="plain-cancel">Cancel</button>';
@@ -3339,6 +3417,11 @@ function renderPlainTimer() {
   root.innerHTML = h;
   root.hidden = false;
   wirePlainRun();
+  var coachBtn = document.getElementById("plain-coach");
+  if (coachBtn) coachBtn.addEventListener("click", function () {
+    state.plainCoach = !state.plainCoach;
+    renderPlainTimer();
+  });
   document.getElementById("plain-close").addEventListener("click", closePlainTimer);
   document.getElementById("plain-cancel").addEventListener("click", closePlainTimer);
   root.onclick = function (e) { if (e.target === root) closePlainTimer(); };
@@ -3363,7 +3446,7 @@ function confirmPlainTimer() {
   state.inTurnSeconds = run.inTurnSeconds;
   state.roundSeconds = run.roundSeconds;
   closePlainTimer();
-  openSession({ labs: [{ title: "", pairs: [], items: [], run: run }], loop: true, plain: true });
+  openSession({ labs: [{ title: "", pairs: [], items: [], run: run }], loop: true, plain: true, coach: state.plainCoach });
 }
 document.getElementById("open-builder").addEventListener("click", function () { openLabBuilder(); });
 
@@ -3428,8 +3511,358 @@ var roundsFx = {
     this.canvas = null;
   }
 };
+/* =====================================================================
+   Coach — the plain timer's background word bloom (batch .50:
+   rebuilt on the Conductor Word bloom's motion, minus its fluid).
+   Tips-category items bloom behind the countdown, each releasing
+   ~30 particles — and ONLY particles: there is no WebGL fluid, no
+   dye, no colour wash behind the words (the "pixel slush" she
+   asked to lose). The particles ride the same tangential swirl
+   the Conductor bloom falls back to without WebGL, and words and
+   particles alike fade and grow on the Conductor's own curves —
+   the smooth01 envelope over the first / last 45% of a life,
+   eased once more with alpha^1.5 and baked into each element's
+   rgba colour (never globalAlpha), and the cubic growth curve —
+   with unrounded float font sizes, so nothing steps. (The old
+   Coach copy ran choppier than the Conductor's for three plain
+   reasons: it rounded the font size to whole pixels every frame,
+   its envelope was a raw sine, and every renderSession restart
+   wiped its blooms back to zero; start() below now preserves
+   live blooms across the re-renders that replace its canvas.)
+   Colours are the Conductor's Four Points palette, verbatim, at
+   Coach's low opacity: a word's alpha peaks at 0.38, particles
+   proportionally fainter, where the Conductor runs full strength
+   in the foreground. SAFE ZONE: words may never bloom behind the
+   timer or any UI — the countdown, its kicker / bar / stage dots,
+   the top bar and the transport are measured off the live DOM
+   into invisible exclusion rects (the same logic-only approach
+   as the Conductor bloom's safeRect: nothing is drawn for them,
+   they only bound where blooms may spawn and drift), a spawn
+   whose full-grown box touches one is rejected, and a particle
+   that strays into one is neither moved there nor drawn there.
+   Background only — the canvas never takes a tap and the timer
+   stays the foreground. Words come from the Tips category as it
+   stands when the session starts; an empty Tips means no bloom.
+   Cadence (batch .51): a new bloom every 8 seconds, and each
+   bloom's word differs from the word the immediately previous
+   bloom showed — no back-to-back repeats (with a single Tips
+   word, repeating it is the only option).
+   Reduced motion stills it: one word at a time, no drift, no
+   swelling, particles held in place.
+   ===================================================================== */
+var coachFx = {
+  raf: null, canvas: null, blooms: [], words: [], spawnIn: 0, lastTs: 0,
+  /* The word shown by the most recent successful bloom (batch
+     .51): the next bloom is picked from Tips excluding this one,
+     so the same word never blooms twice in a row. Cleared only
+     by stop(), so the no-repeat rule holds across the re-renders
+     that preserve live blooms; start() leaves it alone. */
+  lastWord: null,
+  zones: [], zonesKey: "",
+  /* The Four Points palette, verbatim — the same four colours
+     the Conductor's grid and Word bloom lead with. */
+  COLORS: ["#ff4d2e", "#ffd23f", "#57b6ff", "#3ddc97"],
+  PEAK: 0.38,   /* a word's alpha ceiling — Coach's low-opacity feel */
+  SIZE: 1.6,    /* growth ceiling, the Conductor bloom's own */
+  hexA: function (hex, a) {
+    var r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+    return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+  },
+  fontFor: function (s) { return "700 " + s + "px \"Archivo\", system-ui, sans-serif"; },
+  smooth01: function (x) {
+    x = Math.max(0, Math.min(1, x));
+    return x * x * (3 - 2 * x);
+  },
+  /* The Conductor bloom's opacity envelope, verbatim: fade IN
+     over the first 45% of the life, hold briefly, fade OUT over
+     the last 45% — a bloom begins and ends at true zero. */
+  env: function (b) {
+    var t = Math.max(0, Math.min(1, b.age / b.life));
+    var fadeIn = this.smooth01(t / 0.45);
+    var fadeOut = 1 - this.smooth01((t - 0.55) / 0.45);
+    return { t: t, env: Math.min(fadeIn, fadeOut) };
+  },
+  /* Safe zone: measure the timer area and every UI element on
+     the plain stage off the live DOM, in canvas coordinates.
+     The rects are invisible — they are only ever tested against,
+     never drawn. Re-measured whenever the canvas size changes
+     (a resize, a rotation, a re-render's new layout). If nothing
+     measures (layout not ready), fall back to bands in the same
+     places the UI sits: the top bar, the centred countdown block
+     and the transport strip. */
+  computeZones: function (canvas, w, h) {
+    var zones = [];
+    var root = document.getElementById("session");
+    var cr = canvas.getBoundingClientRect();
+    if (root && cr.width > 0) {
+      var sels = [".session-topbar", ".session-transport", ".plain-clock", ".plain-break-big", ".plain-finished", ".plain-stage .kicker", ".plain-stage .bar", ".plain-stage .stage-dots", ".plain-stage .btn-lg"];
+      for (var si = 0; si < sels.length; si++) {
+        var els = root.querySelectorAll(sels[si]);
+        for (var ei = 0; ei < els.length; ei++) {
+          var r = els[ei].getBoundingClientRect();
+          if (r.width <= 0 || r.height <= 0) continue;
+          zones.push({ left: r.left - cr.left, top: r.top - cr.top, right: r.right - cr.left, bottom: r.bottom - cr.top });
+        }
+      }
+    }
+    if (!zones.length && w > 0 && h > 0) {
+      zones.push({ left: 0, top: 0, right: w, bottom: 56 });
+      zones.push({ left: 0, top: h * 0.36, right: w, bottom: h * 0.64 });
+      zones.push({ left: 0, top: h - 92, right: w, bottom: h });
+    }
+    this.zones = zones;
+    this.zonesKey = w + "x" + h;
+  },
+  /* Does a box (centre + half sizes) touch any exclusion rect,
+     each grown by pad? */
+  boxHitsZone: function (cx, cy, halfW, halfH, pad) {
+    for (var i = 0; i < this.zones.length; i++) {
+      var z = this.zones[i];
+      if (cx + halfW > z.left - pad && cx - halfW < z.right + pad && cy + halfH > z.top - pad && cy - halfH < z.bottom + pad) return true;
+    }
+    return false;
+  },
+  pointInZone: function (x, y, pad) {
+    for (var i = 0; i < this.zones.length; i++) {
+      var z = this.zones[i];
+      if (x > z.left - pad && x < z.right + pad && y > z.top - pad && y < z.bottom + pad) return true;
+    }
+    return false;
+  },
+  /* One spawn, Conductor-style: a word whose full-grown box must
+     clear every live bloom's box AND every safe-zone rect (the
+     box is grown a further 12px for the wobble + drift travel —
+     see the draw step — so a bloom can never slide into the UI
+     mid-life either). A spawn that finds no clear spot in 16
+     tries is dropped; the spawner tries again later. Each bloom
+     releases ~30 particles clustered over its word, exactly the
+     Conductor bloom's cluster. */
+  spawn: function (ctx, w, h, reduced) {
+    /* Pick randomly from Tips excluding the last word shown, so
+       no word blooms twice in a row; a one-word Tips list has no
+       alternative, so that word is used again. */
+    var pool = this.words;
+    if (pool.length > 1 && this.lastWord !== null) {
+      var filtered = pool.filter(function (w) { return w !== this.lastWord; });
+      if (filtered.length) pool = filtered;
+    }
+    var word = pool[Math.floor(Math.random() * pool.length)];
+    var baseSize = 17 + Math.random() * 12;
+    ctx.font = this.fontFor(baseSize);
+    var halfW = ctx.measureText(word).width * this.SIZE / 2;
+    var halfH = baseSize * this.SIZE * 0.62;
+    var marginX = Math.min(halfW + 12, w * 0.44);
+    var marginY = Math.min(halfH + 10, h * 0.4);
+    var self = this;
+    function overlaps(x, y) {
+      for (var i = 0; i < self.blooms.length; i++) {
+        var o = self.blooms[i];
+        if (Math.abs(o.x - x) < o.halfW + halfW + 18 && Math.abs(o.y - y) < o.halfH + halfH + 18) return true;
+      }
+      return false;
+    }
+    function clampPt(x, y) {
+      var loX = marginX, hiX = w - marginX, loY = marginY, hiY = h - marginY;
+      return {
+        x: loX > hiX ? w / 2 : Math.max(loX, Math.min(hiX, x)),
+        y: loY > hiY ? h / 2 : Math.max(loY, Math.min(hiY, y))
+      };
+    }
+    var spot = null;
+    for (var i = 0; i < 16 && !spot; i++) {
+      var c = clampPt(Math.random() * w, Math.random() * h);
+      if (overlaps(c.x, c.y)) continue;
+      if (this.boxHitsZone(c.x, c.y, halfW, halfH, 12)) continue;
+      spot = c;
+    }
+    if (!spot) return false;
+    var b = {
+      word: word, x: spot.x, y: spot.y, halfW: halfW, halfH: halfH,
+      baseSize: baseSize, age: 0,
+      life: reduced ? 6 : 5 + Math.random() * 2,
+      color: Math.floor(Math.random() * this.COLORS.length),
+      phase: Math.random() * Math.PI * 2,
+      wobbleSpeed: 0.9 + Math.random() * 0.7,
+      driftX: (Math.random() - 0.5) * 14,
+      driftY: (Math.random() - 0.5) * 10,
+      cx: spot.x, cy: spot.y,
+      particles: []
+    };
+    for (i = 0; i < 30; i++) {
+      var px = b.x + (Math.random() * 2 - 1) * halfW * 0.85;
+      var py = b.y + (Math.random() * 2 - 1) * baseSize * this.SIZE * 0.55;
+      b.particles.push({ x: px, y: py, px: px, py: py, size: 1 + Math.random() * 1.7 });
+    }
+    this.blooms.push(b);
+    this.lastWord = word;
+    return true;
+  },
+  start: function (canvas) {
+    /* NOT a full stop(): renderSession rebuilds the session DOM
+       (and with it this canvas) on pause, on a rounds stage
+       change, on tab return — the old start wiped the blooms on
+       every one of those, so a living bloom vanished and the
+       rotation restarted from zero, part of why Coach felt
+       choppier than the Conductor. Cancelling the frame and
+       re-binding the new canvas keeps live blooms blooming; only
+       stop() (session close / finish / a non-Coach render) clears
+       them. */
+    if (this.raf !== null) { cancelAnimationFrame(this.raf); this.raf = null; }
+    if (!canvas) return;
+    if (!this.words.length) {
+      var tips = null;
+      effectiveCategories().forEach(function (c) { if (c.name === "Tips") tips = c; });
+      this.words = tips ? tips.items.slice() : [];
+    }
+    if (!this.words.length) return;
+    this.canvas = canvas;
+    this.lastTs = 0;
+    this.zones = [];
+    this.zonesKey = "";
+    var self = this;
+    var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function frame(ts) {
+      if (!self.canvas || !document.body.contains(self.canvas)) { self.raf = null; return; }
+      var c = self.canvas;
+      var w = c.clientWidth || 0, h = c.clientHeight || 0;
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      if (w > 0 && h > 0) {
+        var pw = Math.round(w * dpr), ph = Math.round(h * dpr);
+        if (c.width !== pw || c.height !== ph) { c.width = pw; c.height = ph; self.zonesKey = ""; }
+        if (self.zonesKey !== w + "x" + h) self.computeZones(c, w, h);
+        var ctx = c.getContext("2d");
+        if (ctx) {
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          /* Transparent clear and nothing else behind the words:
+             no dye, no gradient, no fluid — particles only. */
+          ctx.clearRect(0, 0, w, h);
+          var dt = self.lastTs ? Math.min(0.05, (ts - self.lastTs) / 1000) : 0.016;
+          self.lastTs = ts;
+          /* Spawn: a new word every 8 seconds (batch .51), at
+             most three alive — a quiet rotation, not a crowd.
+             A bloom's life (5–7s, 6s reduced) ends before the
+             next 8s tick, so blooms arrive one at a time. A
+             spawn the safe zone refuses still consumes the
+             interval, so words never burst in late. */
+          self.spawnIn -= dt;
+          var maxAlive = reduced ? 1 : 3;
+          if (self.spawnIn <= 0 && self.blooms.length < maxAlive) {
+            self.spawnIn = 8;
+            self.spawn(ctx, w, h, reduced);
+          }
+          /* Age the blooms and fix each one's rendered centre for
+             this frame: the Conductor's wobble (a small sin/cos
+             sway scaled by the eased alpha) plus its drift (a
+             total displacement across the life, not a velocity). */
+          self.blooms = self.blooms.filter(function (b) { return b.age < b.life; });
+          self.blooms.forEach(function (b) {
+            b.age += dt;
+            var s = self.env(b);
+            var wa = Math.pow(s.env, 1.5);
+            if (reduced) { b.cx = b.x; b.cy = b.y; }
+            else {
+              b.cx = b.x + Math.sin(b.age * b.wobbleSpeed + b.phase) * 4 * wa + b.driftX * s.t;
+              b.cy = b.y + Math.cos(b.age * b.wobbleSpeed * 0.8 + b.phase * 1.7) * 3 * wa + b.driftY * s.t;
+            }
+          });
+          /* Particles: each bloom's cluster, advected by the
+             Conductor bloom's own no-WebGL motion — a gentle
+             tangential swirl around the bloom's centre that decays
+             with distance, plus a share of the bloom's drift,
+             speed-capped exactly as there. A particle whose next
+             step would land inside a safe-zone rect stays where
+             it was instead, so the swirl can never carry grains
+             behind the timer or the controls. */
+          if (!reduced) {
+            self.blooms.forEach(function (b) {
+              if (!b.particles) return;
+              for (var pi = 0; pi < b.particles.length; pi++) {
+                var p = b.particles[pi];
+                p.px = p.x; p.py = p.y;
+                var dx = p.x - b.cx, dy = p.y - b.cy;
+                var d = Math.sqrt(dx * dx + dy * dy) + 0.001;
+                var sw = 30 * Math.exp(-d / 110);
+                var vx = (-dy / d) * sw + b.driftX * 0.5;
+                var vy = (dx / d) * sw + b.driftY * 0.5;
+                var sp = Math.sqrt(vx * vx + vy * vy);
+                if (sp > 320) { vx *= 320 / sp; vy *= 320 / sp; }
+                var nx = p.x + vx * dt, ny = p.y + vy * dt;
+                if (!self.pointInZone(nx, ny, 4)) { p.x = nx; p.y = ny; }
+              }
+            });
+          }
+          /* Draw the particles first, as the Conductor does: a
+             short streak from each grain's previous spot to its
+             new one, plus its dot, fading on the same eased
+             envelope as the word, at Coach's low opacity. A grain
+             inside a safe-zone rect is not drawn. */
+          ctx.lineCap = "round";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          self.blooms.forEach(function (b) {
+            if (!b.particles || !b.particles.length) return;
+            var s = self.env(b);
+            if (s.env <= 0.01) return;
+            var pa = Math.pow(s.env, 1.5);
+            var col = self.COLORS[b.color];
+            ctx.strokeStyle = self.hexA(col, self.PEAK * 0.5 * pa);
+            ctx.fillStyle = self.hexA(col, self.PEAK * 0.9 * pa);
+            for (var pj = 0; pj < b.particles.length; pj++) {
+              var pp = b.particles[pj];
+              if (self.pointInZone(pp.x, pp.y, 4)) continue;
+              ctx.lineWidth = pp.size;
+              ctx.beginPath();
+              ctx.moveTo(pp.px, pp.py);
+              ctx.lineTo(pp.x, pp.y);
+              ctx.stroke();
+              ctx.beginPath();
+              ctx.arc(pp.x, pp.y, pp.size * 0.62, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          });
+          /* Then the words: the envelope baked into the rgba fill
+             (never globalAlpha), the scale on the Conductor's
+             separate cubic growth curve, the font size an
+             unrounded float — the three habits that make the
+             Conductor's bloom read smooth. Peak alpha is Coach's
+             0.38, in a Four Points colour. */
+          self.blooms.forEach(function (b) {
+            var s = self.env(b);
+            var wa = Math.pow(s.env, 1.5);
+            if (wa <= 0.004) return;
+            var grow = 1 - Math.pow(1 - s.t, 3);
+            var scale = reduced ? self.SIZE : 0.35 + (self.SIZE - 0.35) * grow;
+            var col = self.COLORS[b.color];
+            ctx.save();
+            ctx.translate(b.cx, b.cy);
+            if (!reduced) ctx.rotate(Math.sin(b.age * 0.9 + b.phase) * 0.03 * wa);
+            ctx.font = self.fontFor(b.baseSize * scale);
+            ctx.fillStyle = self.hexA(col, self.PEAK * wa);
+            ctx.shadowColor = self.hexA(col, self.PEAK * wa);
+            ctx.shadowBlur = 10 * wa;
+            ctx.fillText(b.word, 0, 0);
+            ctx.restore();
+          });
+          ctx.shadowBlur = 0;
+        }
+      }
+      self.raf = requestAnimationFrame(frame);
+    }
+    this.raf = requestAnimationFrame(frame);
+  },
+  stop: function () {
+    if (this.raf !== null) { cancelAnimationFrame(this.raf); this.raf = null; }
+    this.canvas = null;
+    this.blooms = [];
+    this.spawnIn = 0;
+    this.lastTs = 0;
+    this.lastWord = null;
+    this.zones = [];
+    this.zonesKey = "";
+  }
+};
 var session = {
-  active: false, plain: false, labs: [], labIndex: 0, title: "", items: [], mode: "together",
+  active: false, plain: false, coach: false, labs: [], labIndex: 0, title: "", items: [], mode: "together",
   togetherMinutes: 5, inTurnSeconds: 30, roundSeconds: 60,
   index: 0, round: 1, roundNumber: 1, loop: false, away: false, remaining: 0, running: false, done: false, endAt: null,
   lastStage: 1, phase: "round", /* rounds: "round" | "break" (10s) */
@@ -3848,6 +4281,7 @@ var session = {
   },
   close: function () {
     roundsFx.stop();
+    coachFx.stop();
     var nm = document.getElementById("session-note-modal");
     if (nm) { nm.hidden = true; nm.innerHTML = ""; }
     var lm = document.getElementById("session-list-modal");
@@ -3857,6 +4291,7 @@ var session = {
     this.previewPaused = false;
     this.active = false;
     this.plain = false;
+    this.coach = false;
     this.away = false;
     this.running = false;
     this.endAt = null;
@@ -3868,6 +4303,9 @@ var session = {
 function openSession(cfg) {
   ensureAudio();
   session.plain = !!cfg.plain;
+  /* Coach belongs to the plain timer alone — a lab session never
+     blooms, whatever built it. */
+  session.coach = !!cfg.coach && !!cfg.plain;
   session.labs = cfg.labs && cfg.labs.length ? cfg.labs : [{ title: cfg.title || "Lab", items: cfg.items || [] }];
   /* Session-level settings are only the fallback for labs that
      carry no run of their own (party steps). Queue sessions hand
@@ -4061,7 +4499,7 @@ function sessionPreviewRowHTML(lab, i) {
   var h = '<div class="drill-row' + (current ? " current" : "") + '"' + (current ? ' aria-current="true"' : "") + ">";
   h += '<span class="fd dim" style="width:20px;flex:none;text-align:center;font-size:14px;font-weight:900;">' + (i + 1) + "</span>";
   h += '<span class="grow" style="min-width:0;"><span class="fd" style="display:block;font-size:12px;font-weight:700;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(lab.title || "Lab " + (i + 1)) + '</span>' +
-    '<span class="small" style="display:block;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' + (pairs.length > 0 && pairs.every(function (p) { return !!catNames[p.category]; }) ? 'color:var(--tag);' : 'color:var(--dim);') + '">' + esc(pairs.map(function (p) { return p.item ? String(p.item).replace(/\s+/g, " ") : "Random " + p.category; }).join(" · ")) + '</span>' +
+    '<span class="small" style="display:block;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' + (pairs.length > 0 && pairs.every(function (p) { return !!catNames[p.category]; }) ? 'color:var(--tag);' : 'color:var(--dim);') + '">' + esc((lab.noteKey ? "Note lab · " : "") + pairs.map(function (p) { return p.item ? String(p.item).replace(/\s+/g, " ") : "Random " + p.category; }).join(" · ")) + '</span>' +
     '<span style="display:block;margin-top:4px;"><span class="run-badge">' + icon("timer", 14) + " " + esc(runSummary(run)) + "</span></span></span>";
   h += "</div>";
   return h;
@@ -4145,6 +4583,9 @@ function renderSession() {
      and a way back — no note box, no log, nothing saved. */
   if (session.plain) {
     var ph = '<div class="session-inner">';
+    /* Coach: the Tips bloom's canvas goes in first, behind
+       everything the plain stage paints over it. */
+    if (session.coach && !session.done) ph += '<canvas class="coach-particles" id="coach-canvas" aria-hidden="true"></canvas>';
     ph += '<div class="session-topbar"><span aria-hidden="true"></span><span aria-hidden="true"></span>';
     if (!session.done) ph += finishBtnHTML();
     else ph += '<span aria-hidden="true"></span>';
@@ -4182,7 +4623,10 @@ function renderSession() {
     el.innerHTML = ph;
     el.classList.toggle("break", mode === "rounds" && session.phase === "break" && !session.done);
     el.classList.toggle("done", session.done);
+    el.classList.toggle("coach", session.coach && !session.done);
     roundsFx.stop();
+    if (session.coach && !session.done) coachFx.start(document.getElementById("coach-canvas"));
+    else coachFx.stop();
     var pFinish = document.getElementById("s-finish");
     if (pFinish) pFinish.addEventListener("click", function () { session.finish(); });
     var pPause = document.getElementById("s-pause");
@@ -4333,8 +4777,10 @@ function renderSession() {
   /* The Done screen scrolls (batch .24 CSS); a running session
      stays locked. The class rides on the overlay itself. */
   el.classList.toggle("done", session.done);
+  el.classList.toggle("coach", false);
   if (mode === "rounds" && !session.done) roundsFx.start(document.getElementById("rounds-canvas"));
   else roundsFx.stop();
+  coachFx.stop();
   /* The close button exists only on the Done screen now (the
      running top bar carries Finish instead — they did the same
      thing). From the log, Close really closes. */
